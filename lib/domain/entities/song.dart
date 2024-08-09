@@ -2,6 +2,8 @@ import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 
 class Song extends Equatable {
+  final int id;
+  final int? albumId;
   final int? number;
   final String? name;
   final String? album;
@@ -11,7 +13,9 @@ class Song extends Equatable {
   final String? reference;
 
   const Song(
-      {required this.number,
+      {required this.id,
+      required this.albumId,
+      required this.number,
       required this.name,
       required this.album,
       required this.duration,

@@ -1,4 +1,4 @@
 mixin EntityConvertible<I, O> {
   O toEntity();
-  I toModel();
+  I fromEntity(O model) => throw UnimplementedError();
 }

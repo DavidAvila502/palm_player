@@ -1,8 +1,8 @@
-import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:palm_player/data/datasources/local/song/song_local_datasorce_imp.dart';
+// import 'package:palm_player/data/datasources/local/song/song_local_datasource_imp.dart';
+import 'package:palm_player/data/datasources/local/song/song_local_datasource2_imp.dart';
 import 'package:palm_player/data/repositories/song_repository_imp.dart';
 import 'package:palm_player/domain/entities/song.dart';
 import 'package:palm_player/domain/use_cases/song_use_cases.dart';
@@ -17,10 +17,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Song> songList = [];
   AudioPlayer player = AudioPlayer();
-  Uint8List? albumImage;
 
   final SongUseCases _songUseCases = SongUseCases(
-      SongRepositoryImp(songLocalDatasource: SongLocalDatasorceImp()));
+      SongRepositoryImp(songLocalDatasource: SongLocalDatasource2Imp()));
 
   Future<void> getAllSongs() async {
     List<Song> newSongList = await _songUseCases.getAllSongs();
@@ -38,14 +37,14 @@ class _HomeScreenState extends State<HomeScreen> {
     player.stop();
     player.setFilePath(song.reference!);
     player.play();
-
-    setState(() {
-      albumImage = song.image;
-    });
   }
 
   Future<void> clearTemporallyFiles() async {
     FilePicker.platform.clearTemporaryFiles();
+
+    setState(() {
+      songList = [];
+    });
   }
 
   @override
@@ -68,32 +67,44 @@ class _HomeScreenState extends State<HomeScreen> {
                       clearTemporallyFiles();
                     },
                     child: const Text('Clear')),
-                SizedBox(
-                  height: 600,
-                  child: ListView.separated(
-                      separatorBuilder: (BuildContext context, index) {
-                        return const SizedBox(
-                          height: 15,
-                        );
-                      },
-                      itemCount: songList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return GestureDetector(
-                          onTap: () {
-                            playAudio(songList[index]);
-                          },
-                          child: Text(songList[index].reference ?? 'none'),
-                        );
-                      }),
+                Padding(
+                  padding: const EdgeInsets.only(left: 30),
+                  child: SizedBox(
+                    height: 600,
+                    child: ListView.separated(
+                        separatorBuilder: (BuildContext context, index) {
+                          return const SizedBox(
+                            height: 15,
+                          );
+                        },
+                        itemCount: songList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Row(children: <Widget>[
+                            FutureBuilder(
+                                future: _songUseCases
+                                    .getSongArt(songList[index].id),
+                                builder: (BuildContext context, snapShot) {
+                                  return ClipOval(
+                                      child: !snapShot.hasData
+                                          ? const CircularProgressIndicator()
+                                          : Image.memory(
+                                              snapShot.data!,
+                                              height: 50,
+                                            ));
+                                }),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                playAudio(songList[index]);
+                              },
+                              child: Text(songList[index].name ?? 'none'),
+                            ),
+                          ]);
+                        }),
+                  ),
                 ),
-                albumImage != null
-                    ? ClipOval(
-                        child: Image.memory(
-                        albumImage!,
-                        fit: BoxFit.cover,
-                        height: 300,
-                      ))
-                    : const Text('Empty')
               ],
             ),
           ),

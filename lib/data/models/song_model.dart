@@ -4,6 +4,8 @@ import 'package:palm_player/data/datasources/mappers/entity_convertible.dart';
 import 'package:palm_player/domain/entities/song.dart';
 
 class SongModel extends Equatable with EntityConvertible<SongModel, Song> {
+  final int id;
+  final int? albumId;
   final int? trackNumber;
   final String? trackName;
   final String? albumName;
@@ -13,7 +15,9 @@ class SongModel extends Equatable with EntityConvertible<SongModel, Song> {
   final String? filePath;
 
   const SongModel(
-      {required this.trackNumber,
+      {required this.id,
+      required this.albumId,
+      required this.trackNumber,
       required this.trackName,
       required this.albumName,
       required this.trackDuration,
@@ -35,6 +39,8 @@ class SongModel extends Equatable with EntityConvertible<SongModel, Song> {
   @override
   Song toEntity() {
     return Song(
+        id: id,
+        albumId: albumId,
         number: trackNumber,
         name: trackName,
         album: albumName,
@@ -46,6 +52,8 @@ class SongModel extends Equatable with EntityConvertible<SongModel, Song> {
 
   factory SongModel.fromJson(Map<String, dynamic> json) {
     return SongModel(
+        id: json['id'],
+        albumId: json['albumId'],
         trackNumber: json['trackNumber'],
         trackName: json['trackName'],
         albumName: json['albumName'],
@@ -57,6 +65,8 @@ class SongModel extends Equatable with EntityConvertible<SongModel, Song> {
 
   Map<String, dynamic> toJson(SongModel song) {
     return {
+      'id': id,
+      'albumId': albumId,
       'trackNumber': trackNumber,
       'trackName': trackName,
       'albumName': albumName,
@@ -65,11 +75,5 @@ class SongModel extends Equatable with EntityConvertible<SongModel, Song> {
       'albumArtistName': albumArtistName,
       'filePath': filePath
     };
-  }
-
-  @override
-  SongModel toModel() {
-    // TODO: implement toModel
-    throw UnimplementedError();
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:palm_player/data/datasources/local/song/song_local_datasource.dart';
 import 'package:palm_player/data/models/song_model.dart';
 import 'package:palm_player/domain/entities/song.dart';
@@ -13,5 +15,12 @@ class SongRepositoryImp extends SongRepository {
     List<SongModel> response = await songLocalDatasource.getAllSongs();
 
     return response.map((sonModel) => sonModel.toEntity()).toList();
+  }
+
+  @override
+  Future<Uint8List?> getSongArt(int id) async {
+    Uint8List? response = await songLocalDatasource.getSongArt(id);
+
+    return response;
   }
 }
