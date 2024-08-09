@@ -40,8 +40,6 @@ dependencies:
    just_audio: ^0.9.39
    path: ^1.9.0
    permission_handler: ^11.3.1
-   flutter_media_metadata: ^1.0.0+1
-
    on_audio_query: ^2.9.0
 
 dev_dependencies:
