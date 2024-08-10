@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:palm_player/presentation/screens/album_screen.dart';
+import 'package:palm_player/presentation/screens/album_screen.dart';
 import 'package:palm_player/presentation/screens/home_screen.dart';
 
 void main() {
