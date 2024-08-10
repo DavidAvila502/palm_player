@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// import 'package:palm_player/presentation/screens/album_screen.dart';
 import 'package:palm_player/presentation/screens/home_screen.dart';
 
 void main() {
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomeScreen(),
+      // home: const AlbumScreen(),
     );
   }
 }
