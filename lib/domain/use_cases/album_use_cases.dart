@@ -3,8 +3,8 @@ import 'package:palm_player/domain/entities/album.dart';
 import 'package:palm_player/domain/entities/song.dart';
 import 'package:palm_player/domain/repositories/album_repository.dart';
 
-class AlbumUseCase {
-  AlbumUseCase(this.albumRepository);
+class AlbumUseCases {
+  AlbumUseCases(this.albumRepository);
 
   final AlbumRepository albumRepository;
 

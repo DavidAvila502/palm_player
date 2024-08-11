@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:palm_player/data/datasources/local/album/album_local_datasource_imp.dart';
 import 'package:palm_player/data/repositories/album_repository_imp.dart';
 import 'package:palm_player/domain/entities/album.dart';
-import 'package:palm_player/domain/use_cases/album_use_case.dart';
+import 'package:palm_player/domain/use_cases/album_use_cases.dart';
 
 class AlbumScreen extends StatefulWidget {
   const AlbumScreen({super.key});
@@ -12,7 +12,7 @@ class AlbumScreen extends StatefulWidget {
 }
 
 class _AlbumScreen extends State<AlbumScreen> {
-  final AlbumUseCase _albumUsecases = AlbumUseCase(
+  final AlbumUseCases _albumUsecases = AlbumUseCases(
       AlbumRepositoryImp(albumLocalDatasource: AlbumLocalDatasourceImp()));
 
   List<Album> albumList = [];
