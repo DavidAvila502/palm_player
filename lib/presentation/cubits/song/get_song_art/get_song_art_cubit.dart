@@ -9,7 +9,7 @@ class GetSongArtcubit extends Cubit<GetSongArtState> {
 
   GetSongArtcubit(this._songUseCases) : super(const GetSongArtStateInitial());
 
-  Future<void> getAlbumrt(int id) async {
+  Future<void> getSongArt(int id) async {
     try {
       if (state is! GetSongArtStateLoaded) {
         emit(const GetSongArtStateLoading());

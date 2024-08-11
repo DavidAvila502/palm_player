@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     BlocBuilder<GetSongArtcubit,
                                             GetSongArtState>(
                                         bloc: GetSongArtcubit(_songUseCases)
-                                          ..getAlbumrt(
+                                          ..getSongArt(
                                               state.songList[index].id),
                                         builder: (context, state) {
                                           if (state is GetSongArtStateLoading) {
