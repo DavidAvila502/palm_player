@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:palm_player/presentation/cubits/player/player_cubit.dart';
 import 'package:palm_player/presentation/cubits/song/get_all_songs/get_all_songs_cubit.dart';
 import 'package:palm_player/presentation/cubits/song/get_all_songs/get_all_songs_state.dart';
 import 'package:palm_player/presentation/widgets/home_screen/song_list.dart';
@@ -38,6 +39,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
 
                         if (state is GetAllSongsStateLoaded) {
+                          final playerCubit = context.read<PlayerCubit>();
+
+                          if (playerCubit.state.playList.isEmpty) {
+                            playerCubit.setPlayList(state.songList, null);
+                          }
+
                           // * SONG LIST
                           return SongList(
                             state: state,
