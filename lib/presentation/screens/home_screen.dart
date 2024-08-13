@@ -16,6 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.sizeOf(context).height;
+    final double screenWidth = MediaQuery.sizeOf(context).width;
 
     return Scaffold(
       backgroundColor: const Color.fromRGBO(26, 27, 32, 1),
@@ -26,40 +27,36 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SizedBox(
-                    height: screenHeight * 0.7,
-                    child: BlocBuilder<GetAllSongsCubit, GetAllSongsState>(
-                      builder: (context, state) {
-                        if (state is GetAllSongsStateLoading) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
+                SizedBox(
+                  height: screenHeight * 0.7,
+                  width: screenWidth * 0.9,
+                  child: BlocBuilder<GetAllSongsCubit, GetAllSongsState>(
+                    builder: (context, state) {
+                      if (state is GetAllSongsStateLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
 
-                        if (state is GetAllSongsStateLoaded) {
-                          final playerCubit = context.read<PlayerCubit>();
+                      if (state is GetAllSongsStateLoaded) {
+                        // Set the play list.
+                        final playerCubit = context.read<PlayerCubit>();
+                        playerCubit.setPlayList(state.songList, null);
 
-                          if (playerCubit.state.playList.isEmpty) {
-                            playerCubit.setPlayList(state.songList, null);
-                          }
-
-                          // * SONG LIST
-                          return SongList(
-                            state: state,
-                          );
-                        } else {
-                          return const Text(
-                            'Nothing to show.',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 22),
-                          );
-                        }
-                      },
-                    ),
+                        // * SONG LIST
+                        return SongList(
+                          state: state,
+                        );
+                      } else {
+                        return const Text(
+                          'Nothing to show.',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22),
+                        );
+                      }
+                    },
                   ),
                 ),
               ],
