@@ -8,7 +8,7 @@ import 'package:palm_player/domain/use_cases/album_use_cases.dart';
 import 'package:palm_player/domain/use_cases/song_use_cases.dart';
 import 'package:palm_player/presentation/cubits/player/player_cubit.dart';
 import 'package:palm_player/presentation/cubits/song/get_all_songs/get_all_songs_cubit.dart';
-import 'package:palm_player/presentation/screens/home_screen.dart';
+import 'package:palm_player/presentation/navigators/bottom_navigator.dart';
 
 void main() {
   runApp(MultiRepositoryProvider(providers: [
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
               create: (BuildContext context) =>
                   GetAllSongsCubit(context.read<SongUseCases>())..getAllSongs())
         ],
-        child: const HomeScreen(),
+        child: const BottomNavigator(),
       ),
     );
   }
