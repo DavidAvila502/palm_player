@@ -27,64 +27,58 @@ class _AlbumScreen extends State<AlbumScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 40,
-            ),
-
-            ElevatedButton(
-                onPressed: getAlbums, child: const Text('Fetch albums')),
-
-            const SizedBox(
-              height: 20,
-            ),
-
-            // List of albums
-
-            SizedBox(
-              height: 500,
-              child: ListView.separated(
-                  itemCount: albumList.length,
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const Divider();
-                  },
-                  itemBuilder: (BuildContext context, int index) {
-                    return Column(
-                      children: [
-                        FutureBuilder(
-                            future:
-                                _albumUsecases.getAlbumArt(albumList[index].id),
-                            builder: (BuildContext context, snapShot) {
-                              return SizedBox(
-                                height: 80,
-                                width: 80,
-                                child: snapShot.hasData
-                                    ? Image.memory(snapShot.data!)
-                                    : const Center(
-                                        child: CircularProgressIndicator(
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                              );
-                            }),
-                        Container(
-                          color: Colors.black,
-                          padding: const EdgeInsets.all(5),
-                          child: Text(
-                            albumList[index].name!,
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        )
-                      ],
-                    );
-                  }),
-            )
-          ],
+    return Column(
+      children: [
+        const SizedBox(
+          height: 40,
         ),
-      ),
+
+        ElevatedButton(onPressed: getAlbums, child: const Text('Fetch albums')),
+
+        const SizedBox(
+          height: 20,
+        ),
+
+        // List of albums
+
+        SizedBox(
+          height: 500,
+          child: ListView.separated(
+              itemCount: albumList.length,
+              separatorBuilder: (BuildContext context, int index) {
+                return const Divider();
+              },
+              itemBuilder: (BuildContext context, int index) {
+                return Column(
+                  children: [
+                    FutureBuilder(
+                        future: _albumUsecases.getAlbumArt(albumList[index].id),
+                        builder: (BuildContext context, snapShot) {
+                          return SizedBox(
+                            height: 80,
+                            width: 80,
+                            child: snapShot.hasData
+                                ? Image.memory(snapShot.data!)
+                                : const Center(
+                                    child: CircularProgressIndicator(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                          );
+                        }),
+                    Container(
+                      color: Colors.black,
+                      padding: const EdgeInsets.all(5),
+                      child: Text(
+                        albumList[index].name!,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    )
+                  ],
+                );
+              }),
+        )
+      ],
     );
   }
 }
