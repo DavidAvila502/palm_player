@@ -1,6 +1,6 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:palm_player/domain/use_cases/song_use_cases.dart';
 import 'package:palm_player/presentation/cubits/player/player_cubit.dart';
 import 'package:palm_player/presentation/cubits/player/player_state.dart';
 import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_cubit.dart';
@@ -18,6 +18,8 @@ class ExpandiblePlayerSamallContent extends StatefulWidget {
 
 class _ExpandiblePlayerSamallContentState
     extends State<ExpandiblePlayerSamallContent> {
+  Uint8List? _imageCached;
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -33,6 +35,9 @@ class _ExpandiblePlayerSamallContentState
               const SizedBox(
                 width: 25,
               ),
+
+              // * UP ARROW ICON *******
+
               GestureDetector(
                 onTap: () {
                   widget.expandDraggableToMaxSize();
@@ -46,33 +51,44 @@ class _ExpandiblePlayerSamallContentState
               const SizedBox(
                 width: 20,
               ),
-              CircleAvatar(
-                  child: ClipOval(
-                child: BlocBuilder<GetSongArtcubit, GetSongArtState>(
-                  bloc: GetSongArtcubit(context.read<SongUseCases>())
-                    ..getSongArt(
-                        context.read<PlayerCubit>().state.currentSong?.id),
-                  builder: (context, state) {
-                    if (state is GetSongArtStateLoaded) {
-                      return state.albumArt != null
-                          ? Image.memory(
-                              state.albumArt!,
-                              fit: BoxFit.contain,
-                            )
-                          : const Icon(Icons.image_not_supported);
-                    }
 
-                    if (state is GetSongArtStateLoading) {
-                      return const CircularProgressIndicator();
-                    } else {
-                      return const Icon(Icons.image_not_supported);
-                    }
-                  },
+              // * SONG IMAGE ************
+
+              Container(
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 0.5)),
+                child: CircleAvatar(
+                  child: ClipOval(
+                    child: BlocBuilder<GetSongArtcubit, GetSongArtState>(
+                        builder: (context, state) {
+                      return AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          switchInCurve: Curves.easeIn,
+                          switchOutCurve: Curves.easeOut,
+                          child: (state is GetSongArtStateLoaded &&
+                                  state.albumArt != null)
+                              ? Image.memory(state.albumArt!,
+                                  fit: BoxFit.contain,
+                                  key: ValueKey(state.albumArt))
+                              : (_imageCached != null)
+                                  ? Image.memory(_imageCached!,
+                                      fit: BoxFit.contain,
+                                      key: ValueKey(_imageCached))
+                                  : const Icon(
+                                      Icons.image_not_supported,
+                                      key: ValueKey('image_not_supported'),
+                                    ));
+                    }),
+                  ),
                 ),
-              )),
+              ),
               const SizedBox(
                 width: 10,
               ),
+
+              // * SONG NAME AND ARTIS **********
+
               Expanded(
                 flex: 5,
                 child: Column(
@@ -103,7 +119,16 @@ class _ExpandiblePlayerSamallContentState
                     ]),
               ),
               const Spacer(),
-              BlocBuilder<PlayerCubit, PlayerState>(builder: (context, state) {
+
+              // * PLAY ICON *************
+
+              BlocConsumer<PlayerCubit, PlayerState>(
+                  listener: (context, state) {
+                if (state is PlayerStatePlaying) {
+                  context.read<GetSongArtcubit>().getSongArt(
+                      context.read<PlayerCubit>().state.currentSong?.id);
+                }
+              }, builder: (context, state) {
                 if (state is PlayerStatePlaying) {
                   return GestureDetector(
                     onTap: () {

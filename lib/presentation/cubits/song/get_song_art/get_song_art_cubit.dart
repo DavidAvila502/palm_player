@@ -15,13 +15,13 @@ class GetSongArtcubit extends Cubit<GetSongArtState> {
     }
 
     try {
-      if (state is! GetSongArtStateLoaded) {
-        emit(const GetSongArtStateLoading());
+      // if (state is! GetSongArtStateLoaded) {
+      emit(const GetSongArtStateLoading());
 
-        Uint8List? response = await _songUseCases.getSongArt(id);
+      Uint8List? response = await _songUseCases.getSongArt(id);
 
-        emit(GetSongArtStateLoaded(response));
-      }
+      emit(GetSongArtStateLoaded(response));
+      // }
     } catch (_) {
       // rethrow;
       emit(const GetSongArtStateError('Error trying to load the image.'));
