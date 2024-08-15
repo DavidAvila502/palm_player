@@ -28,14 +28,12 @@ class SongList extends StatelessWidget {
           //* Song list item
           return GestureDetector(
             onTap: () {
-              context
-                  .read<PlayerCubit>()
-                  .playSong(state.songList[index].reference!);
+              context.read<PlayerCubit>().playSong(state.songList[index]);
             },
             child: Row(children: <Widget>[
               // * Playing icon
               BlocBuilder<PlayerCubit, PlayerState>(builder: (context, state) {
-                if (state.currentSongPath ==
+                if (state.currentSong?.reference ==
                     this.state.songList[index].reference) {
                   return Icon(Icons.equalizer,
                       color: Theme.of(context).primaryColor);

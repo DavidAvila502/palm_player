@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:palm_player/domain/use_cases/song_use_cases.dart';
+import 'package:palm_player/presentation/cubits/player/player_cubit.dart';
+import 'package:palm_player/presentation/cubits/player/player_state.dart';
+import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_cubit.dart';
+import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_state.dart';
 import 'package:palm_player/presentation/screens/album_screen.dart';
 import 'package:palm_player/presentation/screens/home_screen.dart';
 import 'package:palm_player/presentation/screens/settings_screen.dart';
@@ -187,35 +193,108 @@ class _ExpandiblePlayerControllerState
                             const SizedBox(
                               width: 20,
                             ),
-                            const CircleAvatar(
-                              child: Icon(Icons.image_not_supported),
-                            ),
+                            CircleAvatar(
+                                child: ClipOval(
+                              child:
+                                  BlocBuilder<GetSongArtcubit, GetSongArtState>(
+                                bloc: GetSongArtcubit(
+                                    context.read<SongUseCases>())
+                                  ..getSongArt(context
+                                      .read<PlayerCubit>()
+                                      .state
+                                      .currentSong
+                                      ?.id),
+                                builder: (context, state) {
+                                  if (state is GetSongArtStateLoaded) {
+                                    return state.albumArt != null
+                                        ? Image.memory(
+                                            state.albumArt!,
+                                            fit: BoxFit.contain,
+                                          )
+                                        : const Icon(Icons.image_not_supported);
+                                  }
+
+                                  if (state is GetSongArtStateLoading) {
+                                    return const CircularProgressIndicator();
+                                  } else {
+                                    return const Icon(
+                                        Icons.image_not_supported);
+                                  }
+                                },
+                              ),
+                            )),
                             const SizedBox(
                               width: 10,
                             ),
-                            const Expanded(
+                            Expanded(
+                              flex: 5,
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'unknown',
-                                      style: TextStyle(
+                                      context
+                                              .watch<PlayerCubit>()
+                                              .state
+                                              .currentSong
+                                              ?.name ??
+                                          'Unknown',
+                                      style: const TextStyle(
                                           color: Colors.white, fontSize: 15),
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: false,
+                                      maxLines: 1,
                                     ),
                                     Text(
-                                      'Aristis',
-                                      style: TextStyle(
+                                      context
+                                              .watch<PlayerCubit>()
+                                              .state
+                                              .currentSong
+                                              ?.artist ??
+                                          'Unknown',
+                                      style: const TextStyle(
                                           color: Color.fromRGBO(
                                               255, 255, 255, 0.3)),
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: false,
+                                      maxLines: 1,
                                     )
                                   ]),
                             ),
                             const Spacer(),
-                            const Icon(
-                              Icons.play_arrow,
-                              color: Colors.white,
-                              size: 30,
-                            ),
+                            BlocBuilder<PlayerCubit, PlayerState>(
+                                builder: (context, state) {
+                              if (state is PlayerStatePlaying) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    // playerCubit.pauseSog();
+                                    context.read<PlayerCubit>().pauseSog();
+                                  },
+                                  child: const Icon(
+                                    Icons.stop_rounded,
+                                    color: Colors.white,
+                                    size: 30,
+                                  ),
+                                );
+                              } else if (state is PlayerStatePaused) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    // playerCubit.resumeSong();
+                                    context.read<PlayerCubit>().resumeSong();
+                                  },
+                                  child: const Icon(
+                                    Icons.play_arrow,
+                                    color: Colors.white,
+                                    size: 30,
+                                  ),
+                                );
+                              } else {
+                                return const Icon(
+                                  Icons.play_arrow,
+                                  color: Colors.white,
+                                  size: 30,
+                                );
+                              }
+                            }),
                             const SizedBox(
                               width: 40,
                             ),

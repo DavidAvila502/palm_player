@@ -14,61 +14,67 @@ class PlayerCubit extends Cubit<PlayerState> {
     });
   }
 
-  void setPlayList(List<Song> playList, String? currentSongPath) {
+  void setPlayList(List<Song> playList, Song? currentSong) {
     try {
       if (playList != state.playList) {
-        emit(PlayerStatePlayListLoaded(currentSongPath, playList));
+        emit(PlayerStatePlayListLoaded(currentSong, playList));
       }
     } catch (_) {
       emit(PlayerStateError('Error trying to set the Playlist.',
-          state.currentSongPath, state.playList));
+          state.currentSong, state.playList));
     }
   }
 
-  Future<void> playSong(String path) async {
+  Future<void> playSong(Song currentSong) async {
     try {
       await _audioPlayer.stop();
-      emit(PlayerStateStopped(path, state.playList));
-      await _audioPlayer.setFilePath(path);
+      emit(PlayerStateStopped(currentSong, state.playList));
+      await _audioPlayer.setFilePath(currentSong.reference!);
       _audioPlayer.play();
-      emit(PlayerStatePlaying(path, state.playList));
+      emit(PlayerStatePlaying(currentSong, state.playList));
     } catch (_) {
       emit(PlayerStateError(
-          'Error trying to play the song.', path, state.playList));
+          'Error trying to play the song.', currentSong, state.playList));
     }
   }
 
-  Future<void> pauseSog(String path) async {
+  Future<void> pauseSog() async {
     try {
-      await _audioPlayer.pause();
-      emit(PlayerStatePaused(path, state.playList));
+      if (_audioPlayer.playerState.playing) {
+        await _audioPlayer.pause();
+        emit(PlayerStatePaused(state.currentSong, state.playList));
+      }
     } catch (_) {
-      emit(PlayerStateError(
-          'Error trying to pause the song.', path, state.playList));
+      emit(PlayerStateError('Error trying to pause the song.',
+          state.currentSong, state.playList));
     }
   }
 
-  Future<void> resumeSong(String path) async {
+  Future<void> resumeSong() async {
     try {
-      await _audioPlayer.play();
-      emit(PlayerStatePlaying(path, state.playList));
+      if (_audioPlayer.playerState.playing == false) {
+        emit(PlayerStatePlaying(state.currentSong, state.playList));
+        await _audioPlayer.play();
+      }
     } catch (_) {
-      emit(PlayerStateError(
-          'Error trying to resume the song.', path, state.playList));
+      emit(PlayerStateError('Error trying to resume the song.',
+          state.currentSong, state.playList));
     }
   }
 
   void _nextPlayListSong() {
-    final currentSongIndex = state.playList.indexWhere(
-        (currentSong) => currentSong?.reference == state.currentSongPath);
+    // get current song index in the playlist
+    final currentSongIndex = state.playList
+        .indexWhere((song) => song?.reference == state.currentSong!.reference!);
 
+    // if there is a next song then play it
     if (currentSongIndex >= 0 && currentSongIndex < state.playList.length - 1) {
-      final nextSongReference = state.playList[currentSongIndex + 1]?.reference;
+      final nextSong = state.playList[currentSongIndex + 1];
 
-      if (nextSongReference != null) {
-        playSong(nextSongReference);
+      if (nextSong != null) {
+        playSong(nextSong);
       } else {
-        emit(PlayerStateStopped(state.currentSongPath, state.playList));
+        emit(PlayerStateStopped(state.currentSong, state.playList));
       }
     }
   }
