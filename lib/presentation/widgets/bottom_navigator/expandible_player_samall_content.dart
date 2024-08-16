@@ -17,8 +17,33 @@ class ExpandiblePlayerSamallContent extends StatefulWidget {
 }
 
 class _ExpandiblePlayerSamallContentState
-    extends State<ExpandiblePlayerSamallContent> {
+    extends State<ExpandiblePlayerSamallContent>
+    with SingleTickerProviderStateMixin {
   Uint8List? _imageCached;
+  late AnimationController _animateRotateController;
+
+  void _stopRotation() {
+    _animateRotateController.stop();
+  }
+
+  void _playRotation() {
+    _animateRotateController.repeat();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _animateRotateController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..stop();
+  }
+
+  @override
+  void dispose() {
+    _animateRotateController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,32 +79,35 @@ class _ExpandiblePlayerSamallContentState
 
               // * SONG IMAGE ************
 
-              Container(
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 0.5)),
-                child: CircleAvatar(
-                  child: ClipOval(
-                    child: BlocBuilder<GetSongArtcubit, GetSongArtState>(
-                        builder: (context, state) {
-                      return AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
-                          switchInCurve: Curves.easeIn,
-                          switchOutCurve: Curves.easeOut,
-                          child: (state is GetSongArtStateLoaded &&
-                                  state.albumArt != null)
-                              ? Image.memory(state.albumArt!,
-                                  fit: BoxFit.contain,
-                                  key: ValueKey(state.albumArt))
-                              : (_imageCached != null)
-                                  ? Image.memory(_imageCached!,
-                                      fit: BoxFit.contain,
-                                      key: ValueKey(_imageCached))
-                                  : const Icon(
-                                      Icons.image_not_supported,
-                                      key: ValueKey('image_not_supported'),
-                                    ));
-                    }),
+              RotationTransition(
+                turns: _animateRotateController,
+                child: Container(
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 0.5)),
+                  child: CircleAvatar(
+                    child: ClipOval(
+                      child: BlocBuilder<GetSongArtcubit, GetSongArtState>(
+                          builder: (context, state) {
+                        return AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            switchInCurve: Curves.easeIn,
+                            switchOutCurve: Curves.easeOut,
+                            child: (state is GetSongArtStateLoaded &&
+                                    state.albumArt != null)
+                                ? Image.memory(state.albumArt!,
+                                    fit: BoxFit.contain,
+                                    key: ValueKey(state.albumArt))
+                                : (_imageCached != null)
+                                    ? Image.memory(_imageCached!,
+                                        fit: BoxFit.contain,
+                                        key: ValueKey(_imageCached))
+                                    : const Icon(
+                                        Icons.image_not_supported,
+                                        key: ValueKey('image_not_supported'),
+                                      ));
+                      }),
+                    ),
                   ),
                 ),
               ),
@@ -127,12 +155,14 @@ class _ExpandiblePlayerSamallContentState
                 if (state is PlayerStatePlaying) {
                   context.read<GetSongArtcubit>().getSongArt(
                       context.read<PlayerCubit>().state.currentSong?.id);
+                  _playRotation();
                 }
               }, builder: (context, state) {
                 if (state is PlayerStatePlaying) {
                   return GestureDetector(
                     onTap: () {
                       context.read<PlayerCubit>().pauseSog();
+                      _stopRotation();
                     },
                     child: const Icon(
                       Icons.stop_rounded,
@@ -144,6 +174,7 @@ class _ExpandiblePlayerSamallContentState
                   return GestureDetector(
                     onTap: () {
                       context.read<PlayerCubit>().resumeSong();
+                      _playRotation();
                     },
                     child: const Icon(
                       Icons.play_arrow,
