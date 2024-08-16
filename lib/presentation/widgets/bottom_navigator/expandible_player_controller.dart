@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:palm_player/presentation/widgets/bottom_navigator/expandible_player_large_content.dart';
 import 'package:palm_player/presentation/widgets/bottom_navigator/expandible_player_samall_content.dart';
 
 class ExpandiblePlayerController extends StatefulWidget {
@@ -12,13 +13,32 @@ class ExpandiblePlayerController extends StatefulWidget {
 class _ExpandiblePlayerControllerState
     extends State<ExpandiblePlayerController> {
   late DraggableScrollableController _draggableController;
-  bool _isdraggableOnMaxheight = false;
   bool _isScrolling = false;
+  bool _isSmall = true;
+  bool _isRotating = false;
 
   @override
   void initState() {
     super.initState();
     _draggableController = DraggableScrollableController();
+
+    _draggableController.addListener(() {
+      final double currentSize = _draggableController.size;
+
+      if (currentSize >= 0.3) {
+        setState(() {
+          _isSmall = false;
+        });
+
+        return;
+      }
+
+      setState(() {
+        _isSmall = true;
+      });
+
+      return;
+    });
   }
 
   @override
@@ -27,24 +47,29 @@ class _ExpandiblePlayerControllerState
     super.dispose();
   }
 
-  void setDraggableAutomaticPosition() {
+  void setIsRotating(bool param) {
+    setState(() {
+      _isRotating = param;
+    });
+  }
+
+  Future<void> setDraggableAutomaticPosition() async {
+    if (_isScrolling) return;
+
+    setState(() {
+      _isScrolling = true;
+    });
+
     final double currentSize = _draggableController.size;
 
     if (currentSize >= 0.3) {
-      _draggableController.animateTo(0.9,
+      await _draggableController.animateTo(0.9,
           duration: const Duration(milliseconds: 600),
           curve: Curves.easeOutBack);
-
-      setState(() {
-        _isdraggableOnMaxheight = true;
-      });
     } else {
-      _draggableController.animateTo(0.08,
+      await _draggableController.animateTo(0.08,
           duration: const Duration(milliseconds: 600),
           curve: Curves.easeOutBack);
-      setState(() {
-        _isdraggableOnMaxheight = false;
-      });
     }
 
     setState(() {
@@ -55,18 +80,11 @@ class _ExpandiblePlayerControllerState
   void expandDraggableToMaxSize() {
     _draggableController.animateTo(0.9,
         duration: const Duration(milliseconds: 600), curve: Curves.easeOutBack);
-
-    setState(() {
-      _isdraggableOnMaxheight = true;
-    });
   }
 
   void collapseDraggableToMinSize() {
     _draggableController.animateTo(0.08,
         duration: const Duration(milliseconds: 600), curve: Curves.easeOutBack);
-    setState(() {
-      _isdraggableOnMaxheight = false;
-    });
   }
 
   @override
@@ -79,19 +97,17 @@ class _ExpandiblePlayerControllerState
         builder: (BuildContext context, ScrollController scrollController) {
           return NotificationListener<ScrollNotification>(
             onNotification: (notification) {
-              if (notification is ScrollEndNotification &&
-                  _isScrolling == false) {
-                setState(() {
-                  _isScrolling = true;
-                });
+              if (notification is ScrollEndNotification && !_isScrolling) {
                 setDraggableAutomaticPosition();
               }
 
               return true;
             },
-            child: Container(
+            child: AnimatedContainer(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
                 decoration: BoxDecoration(
-                    color: _isdraggableOnMaxheight
+                    color: !_isSmall
                         ? Colors.grey
                         : Theme.of(context).primaryColor,
                     borderRadius: const BorderRadius.only(
@@ -99,9 +115,13 @@ class _ExpandiblePlayerControllerState
                         topRight: Radius.circular(40))),
                 child: SingleChildScrollView(
                     controller: scrollController,
-                    child: ExpandiblePlayerSamallContent(
-                      expandDraggableToMaxSize: expandDraggableToMaxSize,
-                    ))),
+                    child: _isSmall
+                        ? ExpandiblePlayerSamallContent(
+                            isRotating: _isRotating,
+                            setIsRotating: setIsRotating,
+                            expandDraggableToMaxSize: expandDraggableToMaxSize,
+                          )
+                        : const ExpandiblePlayerLargeContent())),
           );
         });
   }

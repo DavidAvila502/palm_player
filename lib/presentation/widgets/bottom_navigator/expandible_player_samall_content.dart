@@ -8,8 +8,14 @@ import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_s
 
 class ExpandiblePlayerSamallContent extends StatefulWidget {
   final void Function() expandDraggableToMaxSize;
+  final bool isRotating;
+  final void Function(bool) setIsRotating;
+
   const ExpandiblePlayerSamallContent(
-      {super.key, required this.expandDraggableToMaxSize});
+      {super.key,
+      required this.expandDraggableToMaxSize,
+      required this.setIsRotating,
+      this.isRotating = false});
 
   @override
   State<ExpandiblePlayerSamallContent> createState() =>
@@ -36,7 +42,11 @@ class _ExpandiblePlayerSamallContentState
     _animateRotateController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 4),
-    )..stop();
+    );
+
+    widget.isRotating
+        ? _animateRotateController.repeat()
+        : _animateRotateController.stop();
   }
 
   @override
@@ -156,6 +166,7 @@ class _ExpandiblePlayerSamallContentState
                   context.read<GetSongArtcubit>().getSongArt(
                       context.read<PlayerCubit>().state.currentSong?.id);
                   _playRotation();
+                  widget.setIsRotating(true);
                 }
               }, builder: (context, state) {
                 if (state is PlayerStatePlaying) {
@@ -163,6 +174,7 @@ class _ExpandiblePlayerSamallContentState
                     onTap: () {
                       context.read<PlayerCubit>().pauseSog();
                       _stopRotation();
+                      widget.setIsRotating(false);
                     },
                     child: const Icon(
                       Icons.stop_rounded,
@@ -175,6 +187,7 @@ class _ExpandiblePlayerSamallContentState
                     onTap: () {
                       context.read<PlayerCubit>().resumeSong();
                       _playRotation();
+                      widget.setIsRotating(true);
                     },
                     child: const Icon(
                       Icons.play_arrow,

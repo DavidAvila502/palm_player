@@ -11,7 +11,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text('Settings Screen'),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text(
+          'Coming soon.',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ]),
     );
   }
 }
