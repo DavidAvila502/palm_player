@@ -6,7 +6,7 @@ class Album extends Equatable {
   final String? name;
   final String? artist;
   final int? year;
-  final List<Song> songs;
+  final List<Song>? songs;
 
   const Album(
       {required this.id,

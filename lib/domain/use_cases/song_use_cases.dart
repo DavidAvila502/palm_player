@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:palm_player/domain/entities/song.dart';
 import 'package:palm_player/domain/repositories/song_repository.dart';
 

@@ -2,12 +2,20 @@ import 'dart:typed_data';
 import 'package:on_audio_query/on_audio_query.dart ' as audio_query;
 import 'package:palm_player/data/datasources/local/song/song_local_datasource.dart';
 import 'package:palm_player/data/models/song_model.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SongLocalDatasource2Imp extends SongLocalDatasource {
   final audio_query.OnAudioQuery _onAudioQuery = audio_query.OnAudioQuery();
 
   @override
   Future<List<SongModel>> getAllSongs() async {
+    if (!await Permission.audio.isGranted) {
+      await Permission.audio.request();
+    }
+
+    if (!await Permission.audio.isGranted) {
+      return [];
+    }
     List<audio_query.SongModel> data = await _onAudioQuery.querySongs();
 
     List<SongModel> songs = data

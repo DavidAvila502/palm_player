@@ -3,6 +3,9 @@
 <plist version="1.0">
 <dict>
 
+	<key>NSAppleMusicUsageDescription</key>
+	<string>This app requires access to your media library to play audio files.</string>
+
 	<!-- <key>NSPhotoLibraryUsageDescription</key>
 	<string>Necesitamos acceder a tu librería de fotos.</string>
 	<key>NSDocumentsFolderUsageDescription</key>
