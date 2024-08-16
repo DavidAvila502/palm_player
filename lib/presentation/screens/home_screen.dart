@@ -38,17 +38,31 @@ class _HomeScreenState extends State<HomeScreen> {
                   final playerCubit = context.read<PlayerCubit>();
                   playerCubit.setPlayList(state.songList, null);
 
+                  if (state.songList.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'Nothing to show.',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }
+
                   // * SONG LIST
                   return SongList(
                     state: state,
                   );
                 } else {
-                  return const Text(
-                    'Nothing to show.',
-                    style: TextStyle(
+                  return const Center(
+                    child: Text(
+                      'Nothing to show.',
+                      style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 22),
+                      ),
+                    ),
                   );
                 }
               },
