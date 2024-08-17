@@ -79,12 +79,12 @@ class _ExpandiblePlayerControllerState
 
   void expandDraggableToMaxSize() {
     _draggableController.animateTo(0.9,
-        duration: const Duration(milliseconds: 600), curve: Curves.easeOutBack);
+        duration: const Duration(milliseconds: 900), curve: Curves.easeOutBack);
   }
 
   void collapseDraggableToMinSize() {
     _draggableController.animateTo(0.08,
-        duration: const Duration(milliseconds: 600), curve: Curves.easeOutBack);
+        duration: const Duration(milliseconds: 900), curve: Curves.easeOutBack);
   }
 
   @override
@@ -96,33 +96,48 @@ class _ExpandiblePlayerControllerState
         controller: _draggableController,
         builder: (BuildContext context, ScrollController scrollController) {
           return NotificationListener<ScrollNotification>(
-            onNotification: (notification) {
-              if (notification is ScrollEndNotification && !_isScrolling) {
-                setDraggableAutomaticPosition();
-              }
+              onNotification: (notification) {
+                if (notification is ScrollEndNotification && !_isScrolling) {
+                  setDraggableAutomaticPosition();
+                }
 
-              return true;
-            },
-            child: AnimatedContainer(
+                return true;
+              },
+              child: AnimatedContainer(
                 duration: const Duration(milliseconds: 500),
                 curve: Curves.easeInOut,
                 decoration: BoxDecoration(
                     color: !_isSmall
-                        ? Colors.grey
+                        ? Colors.grey[900]
                         : Theme.of(context).primaryColor,
                     borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(40),
                         topRight: Radius.circular(40))),
                 child: SingleChildScrollView(
-                    controller: scrollController,
+                  controller: scrollController,
+
+                  // Dynamic content with transition
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    switchInCurve: Curves.easeInExpo,
+                    switchOutCurve: Curves.easeOutExpo,
                     child: _isSmall
                         ? ExpandiblePlayerSamallContent(
+                            key: const ValueKey(1),
                             isRotating: _isRotating,
                             setIsRotating: setIsRotating,
                             expandDraggableToMaxSize: expandDraggableToMaxSize,
                           )
-                        : const ExpandiblePlayerLargeContent())),
-          );
+                        : ExpandiblePlayerLargeContent(
+                            key: const ValueKey(2),
+                            isRotating: _isRotating,
+                            setIsRotating: setIsRotating,
+                            collapseDraggableToMinSize:
+                                collapseDraggableToMinSize,
+                          ),
+                  ),
+                ),
+              ));
         });
   }
 }
