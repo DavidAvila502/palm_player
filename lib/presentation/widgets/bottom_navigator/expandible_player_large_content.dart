@@ -245,13 +245,7 @@ class _ExpandiblePlayerLargeContentState
 
                   // * Play button
 
-                  BlocConsumer<PlayerCubit, PlayerState>(
-                    listener: (context, state) {
-                      if (state is PlayerStatePlaying) {
-                        context.read<GetSongArtcubit>().getSongArt(
-                            context.read<PlayerCubit>().state.currentSong?.id);
-                      }
-                    },
+                  BlocBuilder<PlayerCubit, PlayerState>(
                     builder: (context, state) {
                       if (state is PlayerStatePlaying) {
                         return GestureDetector(

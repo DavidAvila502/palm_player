@@ -163,10 +163,8 @@ class _ExpandiblePlayerSamallContentState
               BlocConsumer<PlayerCubit, PlayerState>(
                   listener: (context, state) {
                 if (state is PlayerStatePlaying) {
-                  context.read<GetSongArtcubit>().getSongArt(
-                      context.read<PlayerCubit>().state.currentSong?.id);
-                  _playRotation();
                   widget.setIsRotating(true);
+                  _playRotation();
                 }
               }, builder: (context, state) {
                 if (state is PlayerStatePlaying) {

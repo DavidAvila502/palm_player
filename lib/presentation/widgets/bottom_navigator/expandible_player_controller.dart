@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:palm_player/presentation/cubits/player/player_cubit.dart';
+import 'package:palm_player/presentation/cubits/player/player_state.dart';
+import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_cubit.dart';
 import 'package:palm_player/presentation/widgets/bottom_navigator/expandible_player_large_content.dart';
 import 'package:palm_player/presentation/widgets/bottom_navigator/expandible_player_samall_content.dart';
 
@@ -89,55 +93,67 @@ class _ExpandiblePlayerControllerState
 
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-        initialChildSize: 0.08,
-        minChildSize: 0.08,
-        maxChildSize: 0.9,
-        controller: _draggableController,
-        builder: (BuildContext context, ScrollController scrollController) {
-          return NotificationListener<ScrollNotification>(
-              onNotification: (notification) {
-                if (notification is ScrollEndNotification && !_isScrolling) {
-                  setDraggableAutomaticPosition();
-                }
+    return BlocListener<PlayerCubit, PlayerState>(
+      listener: (context, state) {
+        if (state is PlayerStatePlaying) {
+          // Update Global Song Image
+          context
+              .read<GetSongArtcubit>()
+              .getSongArt(context.read<PlayerCubit>().state.currentSong?.id);
+          setIsRotating(true);
+        }
+      },
+      child: DraggableScrollableSheet(
+          initialChildSize: 0.08,
+          minChildSize: 0.08,
+          maxChildSize: 0.9,
+          controller: _draggableController,
+          builder: (BuildContext context, ScrollController scrollController) {
+            return NotificationListener<ScrollNotification>(
+                onNotification: (notification) {
+                  if (notification is ScrollEndNotification && !_isScrolling) {
+                    setDraggableAutomaticPosition();
+                  }
 
-                return true;
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeInOut,
-                decoration: BoxDecoration(
-                    color: !_isSmall
-                        ? Colors.grey[900]
-                        : Theme.of(context).primaryColor,
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40))),
-                child: SingleChildScrollView(
-                  controller: scrollController,
+                  return true;
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                  decoration: BoxDecoration(
+                      color: !_isSmall
+                          ? Colors.grey[900]
+                          : Theme.of(context).primaryColor,
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(40),
+                          topRight: Radius.circular(40))),
+                  child: SingleChildScrollView(
+                    controller: scrollController,
 
-                  // Dynamic content with transition
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    switchInCurve: Curves.easeInExpo,
-                    switchOutCurve: Curves.easeOutExpo,
-                    child: _isSmall
-                        ? ExpandiblePlayerSamallContent(
-                            key: const ValueKey(1),
-                            isRotating: _isRotating,
-                            setIsRotating: setIsRotating,
-                            expandDraggableToMaxSize: expandDraggableToMaxSize,
-                          )
-                        : ExpandiblePlayerLargeContent(
-                            key: const ValueKey(2),
-                            isRotating: _isRotating,
-                            setIsRotating: setIsRotating,
-                            collapseDraggableToMinSize:
-                                collapseDraggableToMinSize,
-                          ),
+                    // Dynamic content with transition
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      switchInCurve: Curves.easeInExpo,
+                      switchOutCurve: Curves.easeOutExpo,
+                      child: _isSmall
+                          ? ExpandiblePlayerSamallContent(
+                              key: const ValueKey(1),
+                              isRotating: _isRotating,
+                              setIsRotating: setIsRotating,
+                              expandDraggableToMaxSize:
+                                  expandDraggableToMaxSize,
+                            )
+                          : ExpandiblePlayerLargeContent(
+                              key: const ValueKey(2),
+                              isRotating: _isRotating,
+                              setIsRotating: setIsRotating,
+                              collapseDraggableToMinSize:
+                                  collapseDraggableToMinSize,
+                            ),
+                    ),
                   ),
-                ),
-              ));
-        });
+                ));
+          }),
+    );
   }
 }
