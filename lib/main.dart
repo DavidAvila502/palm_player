@@ -43,8 +43,7 @@ class MyApp extends StatelessWidget {
                     ..getAllSongs()),
           BlocProvider(
               create: (BuildContext context) =>
-                  GetSongArtcubit(context.read<SongUseCases>())
-                    ..getSongArt(null))
+                  GetSongArtcubit(context.read<SongUseCases>()))
         ],
         child: const BottomNavigator(),
       ),

@@ -18,6 +18,13 @@ class _BottomNavigator extends State<BottomNavigator> {
     SettingsScreen()
   ];
   int _selectedIndex = 0;
+  bool _isExpandibleSmall = true;
+
+  void setIsExpandibleSmall(bool param) {
+    setState(() {
+      _isExpandibleSmall = param;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +39,19 @@ class _BottomNavigator extends State<BottomNavigator> {
             bottom: 0,
             child: SizedBox(
                 height: MediaQuery.of(context).size.height * 1,
-                child: const ExpandiblePlayerController()))
+                child: ExpandiblePlayerController(
+                  notifyToBottomNavigatorExpandibleIsSmall:
+                      setIsExpandibleSmall,
+                )))
       ])),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+      bottomNavigationBar: AnimatedContainer(
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        decoration: BoxDecoration(
+          color: _isExpandibleSmall
+              ? Theme.of(context).primaryColor
+              : const Color.fromRGBO(26, 27, 32, 1),
+        ),
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(30), topRight: Radius.circular(30)),

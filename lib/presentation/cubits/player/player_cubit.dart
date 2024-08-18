@@ -9,7 +9,7 @@ class PlayerCubit extends Cubit<PlayerState> {
   PlayerCubit() : super(PlayerStateInitial()) {
     _audioPlayer.playerStateStream.listen((playerState) {
       if (playerState.processingState == audio_play.ProcessingState.completed) {
-        _nextPlayListSong();
+        playNextSongOnPlayList();
       }
     });
   }
@@ -62,7 +62,7 @@ class PlayerCubit extends Cubit<PlayerState> {
     }
   }
 
-  void _nextPlayListSong() {
+  void playNextSongOnPlayList() {
     // get current song index in the playlist
     final currentSongIndex = state.playList
         .indexWhere((song) => song?.reference == state.currentSong!.reference!);
@@ -73,6 +73,26 @@ class PlayerCubit extends Cubit<PlayerState> {
 
       if (nextSong != null) {
         playSong(nextSong);
+      } else {
+        emit(PlayerStateStopped(state.currentSong, state.playList));
+      }
+    }
+  }
+
+  void playPreviousSongOnPlayList() {
+    // get current song index in the playlist
+
+    final currentSongIndex = state.playList.indexWhere((song) {
+      return song?.id == state.currentSong?.id;
+    });
+
+    // if there is a prevous song then play it
+
+    if (currentSongIndex > 0) {
+      final previousSong = state.playList[currentSongIndex - 1];
+
+      if (previousSong != null) {
+        playSong(previousSong);
       } else {
         emit(PlayerStateStopped(state.currentSong, state.playList));
       }

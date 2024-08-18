@@ -175,7 +175,7 @@ class _ExpandiblePlayerSamallContentState
                       widget.setIsRotating(false);
                     },
                     child: const Icon(
-                      Icons.stop_rounded,
+                      Icons.pause,
                       color: Colors.white,
                       size: 30,
                     ),

@@ -72,7 +72,7 @@ class _ExpandiblePlayerLargeContentState
             decoration: BoxDecoration(
                 gradient: LinearGradient(colors: [
                   Theme.of(context).primaryColor,
-                  darken(Theme.of(context).primaryColor, 0.2)
+                  darken(Theme.of(context).primaryColor, 0.15)
                 ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
                 borderRadius: const BorderRadius.only(
                     bottomRight: Radius.circular(40),
@@ -139,7 +139,15 @@ class _ExpandiblePlayerLargeContentState
                 child: Container(
                   decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 1.5)),
+                      border: Border.all(color: Colors.white, width: 1.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: const Offset(0, 3),
+                        )
+                      ]),
                   child: CircleAvatar(
                     maxRadius: 140,
                     child: Stack(alignment: Alignment.center, children: [
@@ -229,15 +237,24 @@ class _ExpandiblePlayerLargeContentState
                 height: 20,
               ),
 
+              // * Player controllers
+
               Row(
                 // * Previous song button
 
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                    size: 40,
+                  GestureDetector(
+                    onTap: () {
+                      context.read<PlayerCubit>().playPreviousSongOnPlayList();
+                      widget.setIsRotating(true);
+                      _playRotation();
+                    },
+                    child: const Icon(
+                      Icons.skip_previous,
+                      color: Colors.white,
+                      size: 35,
+                    ),
                   ),
                   const SizedBox(
                     width: 30,
@@ -255,12 +272,12 @@ class _ExpandiblePlayerLargeContentState
                             widget.setIsRotating(false);
                           },
                           child: Container(
-                            padding: const EdgeInsets.all(20),
+                            padding: const EdgeInsets.all(15),
                             decoration: BoxDecoration(
                                 color: Theme.of(context).primaryColor,
                                 shape: BoxShape.circle),
                             child: const Icon(
-                              Icons.stop_rounded,
+                              Icons.pause,
                               color: Colors.white,
                               size: 40,
                             ),
@@ -276,7 +293,7 @@ class _ExpandiblePlayerLargeContentState
                             widget.setIsRotating(true);
                           },
                           child: Container(
-                            padding: const EdgeInsets.all(20),
+                            padding: const EdgeInsets.all(15),
                             decoration: BoxDecoration(
                                 color: Theme.of(context).primaryColor,
                                 shape: BoxShape.circle),
@@ -289,7 +306,7 @@ class _ExpandiblePlayerLargeContentState
                         );
                       } else {
                         return Container(
-                          padding: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(15),
                           decoration: BoxDecoration(
                               color: Theme.of(context).primaryColor,
                               shape: BoxShape.circle),
@@ -307,10 +324,17 @@ class _ExpandiblePlayerLargeContentState
                   ),
 
                   // * Next song button
-                  const Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.white,
-                    size: 40,
+                  GestureDetector(
+                    onTap: () {
+                      context.read<PlayerCubit>().playNextSongOnPlayList();
+                      widget.setIsRotating(true);
+                      _playRotation();
+                    },
+                    child: const Icon(
+                      Icons.skip_next,
+                      color: Colors.white,
+                      size: 35,
+                    ),
                   ),
                 ],
               )

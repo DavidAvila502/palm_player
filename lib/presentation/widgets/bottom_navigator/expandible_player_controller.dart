@@ -6,8 +6,12 @@ import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_c
 import 'package:palm_player/presentation/widgets/bottom_navigator/expandible_player_large_content.dart';
 import 'package:palm_player/presentation/widgets/bottom_navigator/expandible_player_samall_content.dart';
 
+// TODO: Experimental widget some scroll bugs must be fixed
+
 class ExpandiblePlayerController extends StatefulWidget {
-  const ExpandiblePlayerController({super.key});
+  final void Function(bool) notifyToBottomNavigatorExpandibleIsSmall;
+  const ExpandiblePlayerController(
+      {super.key, required this.notifyToBottomNavigatorExpandibleIsSmall});
 
   @override
   State<ExpandiblePlayerController> createState() =>
@@ -34,12 +38,16 @@ class _ExpandiblePlayerControllerState
           _isSmall = false;
         });
 
+        widget.notifyToBottomNavigatorExpandibleIsSmall(false);
+
         return;
       }
 
       setState(() {
         _isSmall = true;
       });
+
+      widget.notifyToBottomNavigatorExpandibleIsSmall(true);
 
       return;
     });
@@ -68,11 +76,11 @@ class _ExpandiblePlayerControllerState
 
     if (currentSize >= 0.3) {
       await _draggableController.animateTo(0.9,
-          duration: const Duration(milliseconds: 600),
+          duration: const Duration(milliseconds: 500),
           curve: Curves.easeOutBack);
     } else {
       await _draggableController.animateTo(0.08,
-          duration: const Duration(milliseconds: 600),
+          duration: const Duration(milliseconds: 500),
           curve: Curves.easeOutBack);
     }
 
@@ -112,7 +120,11 @@ class _ExpandiblePlayerControllerState
             return NotificationListener<ScrollNotification>(
                 onNotification: (notification) {
                   if (notification is ScrollEndNotification && !_isScrolling) {
-                    setDraggableAutomaticPosition();
+                    Future.delayed(const Duration(milliseconds: 150), () {
+                      if (!_isScrolling) {
+                        setDraggableAutomaticPosition();
+                      }
+                    });
                   }
 
                   return true;
@@ -122,7 +134,7 @@ class _ExpandiblePlayerControllerState
                   curve: Curves.easeInOut,
                   decoration: BoxDecoration(
                       color: !_isSmall
-                          ? Colors.grey[900]
+                          ? const Color.fromRGBO(26, 27, 32, 1)
                           : Theme.of(context).primaryColor,
                       borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(40),
