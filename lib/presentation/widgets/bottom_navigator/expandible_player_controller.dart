@@ -21,7 +21,7 @@ class ExpandiblePlayerController extends StatefulWidget {
 class _ExpandiblePlayerControllerState
     extends State<ExpandiblePlayerController> {
   late DraggableScrollableController _draggableController;
-  bool _isScrolling = false;
+  bool _isDraggableBlocked = false;
   bool _isSmall = true;
   bool _isRotating = false;
 
@@ -65,11 +65,11 @@ class _ExpandiblePlayerControllerState
     });
   }
 
-  Future<void> setDraggableAutomaticPosition() async {
-    if (_isScrolling) return;
+  Future<void> _setDraggableAutomaticPosition() async {
+    if (_isDraggableBlocked) return;
 
     setState(() {
-      _isScrolling = true;
+      _isDraggableBlocked = true;
     });
 
     final double currentSize = _draggableController.size;
@@ -85,7 +85,7 @@ class _ExpandiblePlayerControllerState
     }
 
     setState(() {
-      _isScrolling = false;
+      _isDraggableBlocked = false;
     });
   }
 
@@ -111,61 +111,76 @@ class _ExpandiblePlayerControllerState
           setIsRotating(true);
         }
       },
-      child: DraggableScrollableSheet(
-          initialChildSize: 0.08,
-          minChildSize: 0.08,
-          maxChildSize: 0.9,
-          controller: _draggableController,
-          builder: (BuildContext context, ScrollController scrollController) {
-            return NotificationListener<ScrollNotification>(
-                onNotification: (notification) {
-                  if (notification is ScrollEndNotification && !_isScrolling) {
-                    Future.delayed(const Duration(milliseconds: 150), () {
-                      if (!_isScrolling) {
-                        setDraggableAutomaticPosition();
+      child: Stack(
+        children: [
+          DraggableScrollableSheet(
+              initialChildSize: 0.08,
+              minChildSize: 0.08,
+              maxChildSize: 0.9,
+              controller: _draggableController,
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
+                return NotificationListener<ScrollNotification>(
+                    onNotification: (notification) {
+                      if (notification is ScrollEndNotification &&
+                          !_isDraggableBlocked) {
+                        Future.delayed(const Duration(milliseconds: 150), () {
+                          if (!_isDraggableBlocked) {
+                            _setDraggableAutomaticPosition();
+                          }
+                        });
                       }
-                    });
-                  }
 
-                  return true;
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut,
-                  decoration: BoxDecoration(
-                      color: !_isSmall
-                          ? const Color.fromRGBO(26, 27, 32, 1)
-                          : Theme.of(context).primaryColor,
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(40),
-                          topRight: Radius.circular(40))),
-                  child: SingleChildScrollView(
-                    controller: scrollController,
+                      return true;
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                          color: !_isSmall
+                              ? const Color.fromRGBO(26, 27, 32, 1)
+                              : Theme.of(context).primaryColor,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(40),
+                              topRight: Radius.circular(40))),
+                      child: SingleChildScrollView(
+                        controller: scrollController,
 
-                    // Dynamic content with transition
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      switchInCurve: Curves.easeInExpo,
-                      switchOutCurve: Curves.easeOutExpo,
-                      child: _isSmall
-                          ? ExpandiblePlayerSamallContent(
-                              key: const ValueKey(1),
-                              isRotating: _isRotating,
-                              setIsRotating: setIsRotating,
-                              expandDraggableToMaxSize:
-                                  expandDraggableToMaxSize,
-                            )
-                          : ExpandiblePlayerLargeContent(
-                              key: const ValueKey(2),
-                              isRotating: _isRotating,
-                              setIsRotating: setIsRotating,
-                              collapseDraggableToMinSize:
-                                  collapseDraggableToMinSize,
-                            ),
-                    ),
-                  ),
-                ));
-          }),
+                        // Dynamic content with transition
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          switchInCurve: Curves.easeInExpo,
+                          switchOutCurve: Curves.easeOutExpo,
+                          child: _isSmall
+                              ? ExpandiblePlayerSamallContent(
+                                  key: const ValueKey(1),
+                                  isRotating: _isRotating,
+                                  setIsRotating: setIsRotating,
+                                  expandDraggableToMaxSize:
+                                      expandDraggableToMaxSize,
+                                )
+                              : ExpandiblePlayerLargeContent(
+                                  key: const ValueKey(2),
+                                  isRotating: _isRotating,
+                                  setIsRotating: setIsRotating,
+                                  collapseDraggableToMinSize:
+                                      collapseDraggableToMinSize,
+                                ),
+                        ),
+                      ),
+                    ));
+              }),
+          if (_isDraggableBlocked)
+            Positioned.fill(
+                child: GestureDetector(
+              onVerticalDragUpdate: (_) {},
+              onTap: () {},
+              child: Container(
+                color: Colors.transparent,
+              ),
+            ))
+        ],
+      ),
     );
   }
 }

@@ -277,9 +277,12 @@ class _ExpandiblePlayerLargeContentState
                 children: [
                   GestureDetector(
                     onTap: () {
-                      context.read<PlayerCubit>().playPreviousSongOnPlayList();
-                      widget.setIsRotating(true);
-                      _playRotation();
+                      if (context
+                          .read<PlayerCubit>()
+                          .playPreviousSongOnPlayList()) {
+                        widget.setIsRotating(true);
+                        _playRotation();
+                      }
                     },
                     child: const Icon(
                       Icons.skip_previous,
@@ -357,9 +360,12 @@ class _ExpandiblePlayerLargeContentState
                   // * Next song button
                   GestureDetector(
                     onTap: () {
-                      context.read<PlayerCubit>().playNextSongOnPlayList();
-                      widget.setIsRotating(true);
-                      _playRotation();
+                      if (context
+                          .read<PlayerCubit>()
+                          .playNextSongOnPlayList()) {
+                        widget.setIsRotating(true);
+                        _playRotation();
+                      }
                     },
                     child: const Icon(
                       Icons.skip_next,
