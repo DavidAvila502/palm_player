@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:palm_player/presentation/cubits/player/player_cubit.dart';
 import 'package:palm_player/presentation/cubits/player/player_state.dart';
+import 'package:palm_player/presentation/cubits/progress/song_progress_cubit.dart';
 import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_cubit.dart';
 import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_state.dart';
 import 'package:palm_player/presentation/utils/darken_color.dart';
@@ -237,8 +238,38 @@ class _ExpandiblePlayerLargeContentState
                 height: 20,
               ),
 
-              // * Player controllers
+              // * Player controllers *********
 
+              // * Progress bar *
+              Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: SliderTheme(
+                    data: const SliderThemeData(
+                        trackHeight: 2,
+                        thumbShape:
+                            RoundSliderThumbShape(enabledThumbRadius: 6)),
+                    child: Slider(
+                        min: 0.0,
+                        max: context
+                            .watch<SongProgressCubit>()
+                            .state
+                            .duration
+                            .inSeconds
+                            .toDouble(),
+                        value: context
+                            .watch<SongProgressCubit>()
+                            .state
+                            .position
+                            .inSeconds
+                            .toDouble(),
+                        onChanged: (value) {
+                          context
+                              .read<SongProgressCubit>()
+                              .updateProgressTo(value);
+                        }),
+                  )),
+
+              // * Buttons *
               Row(
                 // * Previous song button
 
