@@ -76,11 +76,11 @@ class _ExpandiblePlayerControllerState
 
     if (currentSize >= 0.3) {
       await _draggableController.animateTo(0.9,
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 400),
           curve: Curves.easeOutBack);
     } else {
       await _draggableController.animateTo(0.08,
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 400),
           curve: Curves.easeOutBack);
     }
 
@@ -90,13 +90,31 @@ class _ExpandiblePlayerControllerState
   }
 
   void expandDraggableToMaxSize() {
+    if (_isDraggableBlocked) return;
+    setState(() {
+      _isDraggableBlocked = true;
+    });
     _draggableController.animateTo(0.9,
-        duration: const Duration(milliseconds: 900), curve: Curves.easeOutBack);
+        duration: const Duration(milliseconds: 400), curve: Curves.easeOutBack);
+
+    setState(() {
+      _isDraggableBlocked = false;
+    });
   }
 
   void collapseDraggableToMinSize() {
+    if (_isDraggableBlocked) return;
+
+    setState(() {
+      _isDraggableBlocked = true;
+    });
+
     _draggableController.animateTo(0.08,
-        duration: const Duration(milliseconds: 900), curve: Curves.easeOutBack);
+        duration: const Duration(milliseconds: 400), curve: Curves.easeOutBack);
+
+    setState(() {
+      _isDraggableBlocked = false;
+    });
   }
 
   @override
@@ -134,7 +152,7 @@ class _ExpandiblePlayerControllerState
                       return true;
                     },
                     child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                       decoration: BoxDecoration(
                           color: !_isSmall
@@ -148,9 +166,9 @@ class _ExpandiblePlayerControllerState
 
                         // Dynamic content with transition
                         child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 200),
-                          switchInCurve: Curves.easeInExpo,
-                          switchOutCurve: Curves.easeOutExpo,
+                          duration: const Duration(milliseconds: 100),
+                          switchInCurve: Curves.easeIn,
+                          switchOutCurve: Curves.easeOut,
                           child: _isSmall
                               ? ExpandiblePlayerSamallContent(
                                   key: const ValueKey(1),
