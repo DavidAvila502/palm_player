@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:palm_player/domain/use_cases/song_use_cases.dart';
 import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_state.dart';
@@ -14,14 +13,20 @@ class GetSongArtcubit extends Cubit<GetSongArtState> {
       return;
     }
 
+    if (state is GetSongArtStateLoaded) {
+      final loadState = state as GetSongArtStateLoaded;
+
+      if (loadState.songId == id) {
+        return;
+      }
+    }
+
     try {
-      // if (state is! GetSongArtStateLoaded) {
       emit(const GetSongArtStateLoading());
 
       Uint8List? response = await _songUseCases.getSongArt(id);
 
-      emit(GetSongArtStateLoaded(response));
-      // }
+      emit(GetSongArtStateLoaded(response, id));
     } catch (_) {
       // rethrow;
       emit(const GetSongArtStateError('Error trying to load the image.'));

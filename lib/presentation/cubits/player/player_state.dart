@@ -3,7 +3,6 @@ import 'package:palm_player/domain/entities/song.dart';
 
 class PlayerState extends Equatable {
   final Song? currentSong;
-
   final List<Song?> playList;
 
   const PlayerState({

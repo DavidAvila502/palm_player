@@ -4,8 +4,6 @@ import 'package:palm_player/domain/entities/song.dart';
 import 'package:palm_player/presentation/cubits/player/player_state.dart';
 
 class PlayerCubit extends Cubit<PlayerState> {
-  // final audio_play.AudioPlayer _audioPlayer = audio_play.AudioPlayer();
-
   final audio_play.AudioPlayer _audioPlayer;
   bool _isPlaySongLoading = false;
 
@@ -33,7 +31,6 @@ class PlayerCubit extends Cubit<PlayerState> {
     _isPlaySongLoading = true;
     try {
       await _audioPlayer.stop();
-      emit(PlayerStateStopped(currentSong, state.playList));
       await _audioPlayer.setFilePath(currentSong.reference!);
       _isPlaySongLoading = false;
       _audioPlayer.play();
