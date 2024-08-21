@@ -7,6 +7,7 @@ import 'package:palm_player/presentation/cubits/progress/song_progress_cubit.dar
 import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_cubit.dart';
 import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_state.dart';
 import 'package:palm_player/presentation/utils/darken_color.dart';
+import 'package:palm_player/presentation/utils/miliseconds_to_minutes.dart';
 
 class ExpandiblePlayerLargeContent extends StatefulWidget {
   final bool isRotating;
@@ -73,7 +74,7 @@ class _ExpandiblePlayerLargeContentState
             decoration: BoxDecoration(
                 gradient: LinearGradient(colors: [
                   Theme.of(context).primaryColor,
-                  darken(Theme.of(context).primaryColor, 0.15)
+                  darken(Theme.of(context).primaryColor, 0.20)
                 ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
                 borderRadius: const BorderRadius.only(
                     bottomRight: Radius.circular(40),
@@ -140,7 +141,7 @@ class _ExpandiblePlayerLargeContentState
                 child: Container(
                   decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 1.5),
+                      border: Border.all(color: Colors.white, width: 1.6),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.5),
@@ -150,7 +151,7 @@ class _ExpandiblePlayerLargeContentState
                         )
                       ]),
                   child: CircleAvatar(
-                    maxRadius: 140,
+                    maxRadius: MediaQuery.sizeOf(context).width * 0.34,
                     child: Stack(alignment: Alignment.center, children: [
                       ClipOval(
                         child: BlocBuilder<GetSongArtcubit, GetSongArtState>(
@@ -201,7 +202,7 @@ class _ExpandiblePlayerLargeContentState
               ),
 
               const SizedBox(
-                height: 20,
+                height: 40,
               ),
 
               // * Song name and Artis name.
@@ -242,32 +243,65 @@ class _ExpandiblePlayerLargeContentState
 
               // * Progress bar *
               Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30),
-                  child: SliderTheme(
-                    data: const SliderThemeData(
-                        trackHeight: 2,
-                        thumbShape:
-                            RoundSliderThumbShape(enabledThumbRadius: 6)),
-                    child: Slider(
-                        min: 0.0,
-                        max: context
-                            .watch<SongProgressCubit>()
-                            .state
-                            .duration
-                            .inSeconds
-                            .toDouble(),
-                        value: context
-                            .watch<SongProgressCubit>()
-                            .state
-                            .position
-                            .inSeconds
-                            .toDouble(),
-                        onChanged: (value) {
-                          context
-                              .read<SongProgressCubit>()
-                              .updateProgressTo(value);
-                        }),
-                  )),
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // * Progress song text
+                    Text(
+                      miliSecondsToMinutesFormat(context
+                          .read<SongProgressCubit>()
+                          .state
+                          .position
+                          .inMilliseconds),
+                      style: const TextStyle(
+                          color: Color.fromRGBO(255, 255, 255, 0.5),
+                          fontSize: 13),
+                    ),
+
+                    // * Slidebar progress.
+                    Expanded(
+                      child: SliderTheme(
+                        data: const SliderThemeData(
+                            trackHeight: 2,
+                            thumbShape:
+                                RoundSliderThumbShape(enabledThumbRadius: 6)),
+                        child: Slider(
+                            min: 0.0,
+                            max: context
+                                .watch<SongProgressCubit>()
+                                .state
+                                .duration
+                                .inSeconds
+                                .toDouble(),
+                            value: context
+                                .watch<SongProgressCubit>()
+                                .state
+                                .position
+                                .inSeconds
+                                .toDouble(),
+                            onChanged: (value) {
+                              context
+                                  .read<SongProgressCubit>()
+                                  .updateProgressTo(value);
+                            }),
+                      ),
+                    ),
+
+                    // * Song Duration text
+                    Text(
+                      miliSecondsToMinutesFormat(context
+                          .read<PlayerCubit>()
+                          .state
+                          .currentSong
+                          ?.duration),
+                      style: const TextStyle(
+                          color: Color.fromRGBO(255, 255, 255, 0.5),
+                          fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
 
               // * Buttons *
               Row(
@@ -308,7 +342,14 @@ class _ExpandiblePlayerLargeContentState
                           child: Container(
                             padding: const EdgeInsets.all(15),
                             decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor,
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Theme.of(context).primaryColor,
+                                      darken(
+                                          Theme.of(context).primaryColor, 0.15)
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter),
                                 shape: BoxShape.circle),
                             child: const Icon(
                               Icons.pause,
@@ -329,7 +370,14 @@ class _ExpandiblePlayerLargeContentState
                           child: Container(
                             padding: const EdgeInsets.all(15),
                             decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor,
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Theme.of(context).primaryColor,
+                                      darken(
+                                          Theme.of(context).primaryColor, 0.15)
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter),
                                 shape: BoxShape.circle),
                             child: const Icon(
                               Icons.play_arrow,
@@ -342,7 +390,13 @@ class _ExpandiblePlayerLargeContentState
                         return Container(
                           padding: const EdgeInsets.all(15),
                           decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
+                              gradient: LinearGradient(
+                                  colors: [
+                                    Theme.of(context).primaryColor,
+                                    darken(Theme.of(context).primaryColor, 0.15)
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter),
                               shape: BoxShape.circle),
                           child: const Icon(
                             Icons.play_arrow,

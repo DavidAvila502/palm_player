@@ -6,7 +6,7 @@ import 'package:palm_player/presentation/cubits/player/player_state.dart';
 import 'package:palm_player/presentation/cubits/song/get_all_songs/get_all_songs_state.dart';
 import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_cubit.dart';
 import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_state.dart';
-import 'package:palm_player/presentation/utils/mliseconds_to_minutes.dart';
+import 'package:palm_player/presentation/utils/miliseconds_to_minutes.dart';
 
 class SongList extends StatelessWidget {
   final GetAllSongsStateLoaded state;
