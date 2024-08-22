@@ -7,7 +7,8 @@ class PlayerCubit extends Cubit<PlayerState> {
   final audio_play.AudioPlayer _audioPlayer;
   bool _isPlaySongLoading = false;
 
-  PlayerCubit(this._audioPlayer) : super(PlayerStateInitial()) {
+  PlayerCubit(this._audioPlayer)
+      : super(const PlayerState(status: PlayerStatus.initial)) {
     _audioPlayer.playerStateStream.listen((playerState) {
       if (playerState.processingState == audio_play.ProcessingState.completed) {
         playNextSongOnPlayList();
@@ -15,14 +16,16 @@ class PlayerCubit extends Cubit<PlayerState> {
     });
   }
 
-  void setPlayList(List<Song> playList, Song? currentSong) {
+  void setPlayList(List<Song> playList) {
     try {
       if (playList != state.playList) {
-        emit(PlayerStatePlayListLoaded(currentSong, playList));
+        emit(state.copyWith(
+            status: PlayerStatus.playListLoaded, playList: playList));
       }
     } catch (_) {
-      emit(PlayerStateError('Error trying to set the Playlist.',
-          state.currentSong, state.playList));
+      emit(state.copyWith(
+          status: PlayerStatus.error,
+          errorMessage: 'Error trying to set the PlayList.'));
     }
   }
 
@@ -34,10 +37,13 @@ class PlayerCubit extends Cubit<PlayerState> {
       await _audioPlayer.setFilePath(currentSong.reference!);
       _isPlaySongLoading = false;
       _audioPlayer.play();
-      emit(PlayerStatePlaying(currentSong, state.playList));
+      emit(state.copyWith(
+          status: PlayerStatus.playing, currentSong: currentSong));
     } catch (_) {
-      emit(PlayerStateError(
-          'Error trying to play the song.', currentSong, state.playList));
+      emit(state.copyWith(
+          status: PlayerStatus.error,
+          errorMessage: 'Error trying to play the song.'));
+
       _isPlaySongLoading = false;
     }
   }
@@ -46,23 +52,25 @@ class PlayerCubit extends Cubit<PlayerState> {
     try {
       if (_audioPlayer.playerState.playing) {
         await _audioPlayer.pause();
-        emit(PlayerStatePaused(state.currentSong, state.playList));
+        emit(state.copyWith(status: PlayerStatus.paused));
       }
     } catch (_) {
-      emit(PlayerStateError('Error trying to pause the song.',
-          state.currentSong, state.playList));
+      emit(state.copyWith(
+          status: PlayerStatus.error,
+          errorMessage: 'Error trying to pause the song.'));
     }
   }
 
   Future<void> resumeSong() async {
     try {
       if (_audioPlayer.playerState.playing == false) {
-        emit(PlayerStatePlaying(state.currentSong, state.playList));
+        emit(state.copyWith(status: PlayerStatus.playing));
         await _audioPlayer.play();
       }
     } catch (_) {
-      emit(PlayerStateError('Error trying to resume the song.',
-          state.currentSong, state.playList));
+      emit(state.copyWith(
+          status: PlayerStatus.error,
+          errorMessage: 'Error trying to resume the song.'));
     }
   }
 
@@ -79,7 +87,7 @@ class PlayerCubit extends Cubit<PlayerState> {
         playSong(nextSong);
         return true;
       } else {
-        emit(PlayerStateStopped(state.currentSong, state.playList));
+        emit(state.copyWith(status: PlayerStatus.stopped));
         return false;
       }
     }
@@ -103,7 +111,7 @@ class PlayerCubit extends Cubit<PlayerState> {
         playSong(previousSong);
         return true;
       } else {
-        emit(PlayerStateStopped(state.currentSong, state.playList));
+        emit(state.copyWith(status: PlayerStatus.stopped));
         return false;
       }
     }

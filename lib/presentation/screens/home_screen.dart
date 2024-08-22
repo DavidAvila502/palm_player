@@ -36,7 +36,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (state is GetAllSongsStateLoaded) {
                   // Set the play list.
                   final playerCubit = context.read<PlayerCubit>();
-                  playerCubit.setPlayList(state.songList, null);
+                  playerCubit.setPlayList(
+                    state.songList,
+                  );
 
                   if (state.songList.isEmpty) {
                     return const Center(

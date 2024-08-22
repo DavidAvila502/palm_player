@@ -162,12 +162,12 @@ class _ExpandiblePlayerSamallContentState
 
               BlocConsumer<PlayerCubit, PlayerState>(
                   listener: (context, state) {
-                if (state is PlayerStatePlaying) {
+                if (state.status == PlayerStatus.playing) {
                   widget.setIsRotating(true);
                   _playRotation();
                 }
               }, builder: (context, state) {
-                if (state is PlayerStatePlaying) {
+                if (state.status == PlayerStatus.playing) {
                   return GestureDetector(
                     onTap: () {
                       context.read<PlayerCubit>().pauseSog();
@@ -180,7 +180,7 @@ class _ExpandiblePlayerSamallContentState
                       size: 30,
                     ),
                   );
-                } else if (state is PlayerStatePaused) {
+                } else if (state.status == PlayerStatus.paused) {
                   return GestureDetector(
                     onTap: () {
                       context.read<PlayerCubit>().resumeSong();

@@ -332,7 +332,7 @@ class _ExpandiblePlayerLargeContentState
 
                   BlocBuilder<PlayerCubit, PlayerState>(
                     builder: (context, state) {
-                      if (state is PlayerStatePlaying) {
+                      if (state.status == PlayerStatus.playing) {
                         return GestureDetector(
                           onTap: () {
                             context.read<PlayerCubit>().pauseSog();
@@ -360,7 +360,7 @@ class _ExpandiblePlayerLargeContentState
                         );
                       }
 
-                      if (state is PlayerStatePaused) {
+                      if (state.status == PlayerStatus.paused) {
                         return GestureDetector(
                           onTap: () {
                             context.read<PlayerCubit>().resumeSong();

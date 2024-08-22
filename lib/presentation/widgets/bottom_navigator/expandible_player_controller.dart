@@ -121,7 +121,7 @@ class _ExpandiblePlayerControllerState
   Widget build(BuildContext context) {
     return BlocListener<PlayerCubit, PlayerState>(
       listener: (context, state) {
-        if (state is PlayerStatePlaying) {
+        if (state.status == PlayerStatus.playing) {
           // Update Global Song Image
           context
               .read<GetSongArtcubit>()
