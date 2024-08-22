@@ -74,7 +74,7 @@ class _ExpandiblePlayerLargeContentState
             decoration: BoxDecoration(
                 gradient: LinearGradient(colors: [
                   Theme.of(context).primaryColor,
-                  darken(Theme.of(context).primaryColor, 0.20)
+                  darken(Theme.of(context).primaryColor, 0.12)
                 ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
                 borderRadius: const BorderRadius.only(
                     bottomRight: Radius.circular(40),
@@ -305,10 +305,60 @@ class _ExpandiblePlayerLargeContentState
 
               // * Buttons *
               Row(
-                // * Previous song button
-
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // * Repeat button
+
+                  BlocBuilder<PlayerCubit, PlayerState>(
+                      builder: (context, state) {
+                    if (state.playMode == PlayMode.repeatAll) {
+                      return GestureDetector(
+                        onTap: () {
+                          context
+                              .read<PlayerCubit>()
+                              .changePlayerMode(PlayMode.repeatOne);
+                        },
+                        child: Icon(
+                          Icons.repeat,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 35,
+                        ),
+                      );
+                    } else if (state.playMode == PlayMode.repeatOne) {
+                      return GestureDetector(
+                        onTap: () {
+                          context
+                              .read<PlayerCubit>()
+                              .changePlayerMode(PlayMode.normal);
+                        },
+                        child: Icon(
+                          Icons.repeat_one,
+                          color: Theme.of(context).primaryColor,
+                          size: 35,
+                        ),
+                      );
+                    }
+
+                    return GestureDetector(
+                      onTap: () {
+                        context
+                            .read<PlayerCubit>()
+                            .changePlayerMode(PlayMode.repeatAll);
+                      },
+                      child: const Icon(
+                        Icons.repeat,
+                        color: Color.fromRGBO(255, 255, 255, 0.2),
+                        size: 35,
+                      ),
+                    );
+                  }),
+
+                  const SizedBox(
+                    width: 15,
+                  ),
+
+                  // * Previous song button
+
                   GestureDetector(
                     onTap: () {
                       if (context
@@ -325,7 +375,7 @@ class _ExpandiblePlayerLargeContentState
                     ),
                   ),
                   const SizedBox(
-                    width: 30,
+                    width: 15,
                   ),
 
                   // * Play button
@@ -346,7 +396,7 @@ class _ExpandiblePlayerLargeContentState
                                     colors: [
                                       Theme.of(context).primaryColor,
                                       darken(
-                                          Theme.of(context).primaryColor, 0.15)
+                                          Theme.of(context).primaryColor, 0.12)
                                     ],
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter),
@@ -374,7 +424,7 @@ class _ExpandiblePlayerLargeContentState
                                     colors: [
                                       Theme.of(context).primaryColor,
                                       darken(
-                                          Theme.of(context).primaryColor, 0.15)
+                                          Theme.of(context).primaryColor, 0.12)
                                     ],
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter),
@@ -393,7 +443,7 @@ class _ExpandiblePlayerLargeContentState
                               gradient: LinearGradient(
                                   colors: [
                                     Theme.of(context).primaryColor,
-                                    darken(Theme.of(context).primaryColor, 0.15)
+                                    darken(Theme.of(context).primaryColor, 0.12)
                                   ],
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter),
@@ -408,7 +458,7 @@ class _ExpandiblePlayerLargeContentState
                     },
                   ),
                   const SizedBox(
-                    width: 30,
+                    width: 15,
                   ),
 
                   // * Next song button
@@ -427,6 +477,39 @@ class _ExpandiblePlayerLargeContentState
                       size: 35,
                     ),
                   ),
+
+                  const SizedBox(
+                    width: 15,
+                  ),
+
+                  // * Shuffle icon
+
+                  BlocBuilder<PlayerCubit, PlayerState>(
+                      builder: (context, state) {
+                    if (state.isShuffle == true) {
+                      return GestureDetector(
+                        onTap: () {
+                          context.read<PlayerCubit>().setShuffle(false);
+                        },
+                        child: Icon(
+                          Icons.shuffle,
+                          color: Theme.of(context).primaryColor,
+                          size: 35,
+                        ),
+                      );
+                    }
+
+                    return GestureDetector(
+                      onTap: () {
+                        context.read<PlayerCubit>().setShuffle(true);
+                      },
+                      child: const Icon(
+                        Icons.shuffle,
+                        color: Color.fromRGBO(255, 255, 255, 0.2),
+                        size: 35,
+                      ),
+                    );
+                  }),
                 ],
               )
             ],

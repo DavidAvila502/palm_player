@@ -7,7 +7,6 @@ enum PlayMode {
   normal,
   repeatOne,
   repeatAll,
-  shuffle,
 }
 
 class PlayerState extends Equatable {
@@ -15,13 +14,15 @@ class PlayerState extends Equatable {
   final List<Song?> playList;
   final PlayerStatus status;
   final PlayMode playMode;
+  final bool isShuffle;
   final String? errorMessage;
 
   const PlayerState(
-      {this.currentSong,
+      {required this.status,
+      this.currentSong,
       this.playList = const [],
-      required this.status,
       this.playMode = PlayMode.normal,
+      this.isShuffle = false,
       this.errorMessage});
 
   PlayerState copyWith({
@@ -29,6 +30,7 @@ class PlayerState extends Equatable {
     List<Song?>? playList,
     PlayerStatus? status,
     PlayMode? playMode,
+    bool? isShuffle,
     String? errorMessage,
   }) {
     return PlayerState(
@@ -36,9 +38,11 @@ class PlayerState extends Equatable {
         playList: playList ?? this.playList,
         status: status ?? this.status,
         playMode: playMode ?? this.playMode,
+        isShuffle: isShuffle ?? this.isShuffle,
         errorMessage: errorMessage ?? this.errorMessage);
   }
 
   @override
-  List<Object?> get props => [currentSong, playList, status, playMode];
+  List<Object?> get props =>
+      [currentSong, playList, status, playMode, isShuffle, errorMessage];
 }
