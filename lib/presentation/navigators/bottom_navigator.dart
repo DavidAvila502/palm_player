@@ -28,6 +28,9 @@ class _BottomNavigator extends State<BottomNavigator> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double bottomNavigationBarHeight = kBottomNavigationBarHeight;
+
     return Scaffold(
       backgroundColor: const Color.fromRGBO(26, 27, 32, 1),
       body: SafeArea(
@@ -38,7 +41,7 @@ class _BottomNavigator extends State<BottomNavigator> {
             right: 0,
             bottom: 0,
             child: SizedBox(
-                height: MediaQuery.of(context).size.height * 1,
+                height: screenHeight * 1,
                 child: ExpandiblePlayerController(
                   notifyToBottomNavigatorExpandibleIsSmall:
                       setIsExpandibleSmall,
@@ -52,27 +55,46 @@ class _BottomNavigator extends State<BottomNavigator> {
               ? Theme.of(context).primaryColor
               : const Color.fromRGBO(26, 27, 32, 1),
         ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-          child: BottomNavigationBar(
-            backgroundColor: Colors.black,
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-              BottomNavigationBarItem(icon: Icon(Icons.album), label: 'Album'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.settings), label: 'Settings'),
-            ],
-            currentIndex: _selectedIndex,
-            selectedItemColor: Theme.of(context).primaryColor,
-            unselectedItemColor: Colors.grey,
-            onTap: (int index) {
-              setState(() {
-                _selectedIndex = index;
-              });
+        child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0, 1),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: child,
+              );
             },
-          ),
-        ),
+            child: _isExpandibleSmall
+                ? ClipRRect(
+                    key: const ValueKey('BottomNavigationBar'),
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30)),
+                    child: BottomNavigationBar(
+                      backgroundColor: Colors.black,
+                      items: const <BottomNavigationBarItem>[
+                        BottomNavigationBarItem(
+                            icon: Icon(Icons.home), label: 'Home'),
+                        BottomNavigationBarItem(
+                            icon: Icon(Icons.album), label: 'Album'),
+                        BottomNavigationBarItem(
+                            icon: Icon(Icons.settings), label: 'Settings'),
+                      ],
+                      currentIndex: _selectedIndex,
+                      selectedItemColor: Theme.of(context).primaryColor,
+                      unselectedItemColor: Colors.grey,
+                      onTap: (int index) {
+                        setState(() {
+                          _selectedIndex = index;
+                        });
+                      },
+                    ),
+                  )
+                : Container(
+                    key: const ValueKey('HideContainer'),
+                    height: bottomNavigationBarHeight)),
       ),
     );
   }
