@@ -25,5 +25,5 @@ class Song extends Equatable {
 
   @override
   List<Object?> get props =>
-      [number, name, album, duration, image, artist, reference];
+      [id, albumId, number, name, album, duration, image, artist, reference];
 }
