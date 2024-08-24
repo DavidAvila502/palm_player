@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:palm_player/presentation/screens/album_screen.dart';
 import 'package:palm_player/presentation/screens/home_screen.dart';
+import 'package:palm_player/presentation/screens/search_screen.dart';
 import 'package:palm_player/presentation/screens/settings_screen.dart';
 import 'package:palm_player/presentation/widgets/bottom_navigator/expandible_player_controller.dart';
 
@@ -14,7 +14,7 @@ class BottomNavigator extends StatefulWidget {
 class _BottomNavigator extends State<BottomNavigator> {
   final List<Widget> _screens = const [
     HomeScreen(),
-    AlbumScreen(),
+    SearchScreen(),
     SettingsScreen()
   ];
   int _selectedIndex = 0;
@@ -32,6 +32,7 @@ class _BottomNavigator extends State<BottomNavigator> {
     double bottomNavigationBarHeight = kBottomNavigationBarHeight;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color.fromRGBO(26, 27, 32, 1),
       body: SafeArea(
           child: Stack(children: [
@@ -78,7 +79,7 @@ class _BottomNavigator extends State<BottomNavigator> {
                         BottomNavigationBarItem(
                             icon: Icon(Icons.home), label: 'Home'),
                         BottomNavigationBarItem(
-                            icon: Icon(Icons.album), label: 'Album'),
+                            icon: Icon(Icons.search), label: 'Search'),
                         BottomNavigationBarItem(
                             icon: Icon(Icons.settings), label: 'Settings'),
                       ],
