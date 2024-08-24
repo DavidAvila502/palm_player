@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:palm_player/domain/entities/song.dart';
 import 'package:palm_player/domain/use_cases/song_use_cases.dart';
 import 'package:palm_player/presentation/cubits/player/player_cubit.dart';
 import 'package:palm_player/presentation/cubits/player/player_state.dart';
-import 'package:palm_player/presentation/cubits/song/get_all_songs/get_all_songs_state.dart';
 import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_cubit.dart';
 import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_state.dart';
 import 'package:palm_player/presentation/utils/miliseconds_to_minutes.dart';
 
 class SongList extends StatelessWidget {
-  final GetAllSongsStateLoaded state;
-  const SongList({super.key, required this.state});
+  final List<Song?> songs;
+  const SongList({super.key, required this.songs});
 
   @override
   Widget build(BuildContext context) {
@@ -23,18 +23,19 @@ class SongList extends StatelessWidget {
             height: 25,
           );
         },
-        itemCount: state.songList.length,
+        itemCount: songs.length,
         itemBuilder: (BuildContext context, int index) {
           //* Song list item
           return GestureDetector(
             onTap: () {
-              context.read<PlayerCubit>().playSong(state.songList[index]);
+              songs[index] != null
+                  ? context.read<PlayerCubit>().playSong(songs[index]!)
+                  : null;
             },
             child: Row(children: <Widget>[
               // * Playing icon
               BlocBuilder<PlayerCubit, PlayerState>(builder: (context, state) {
-                if (state.currentSong?.reference ==
-                    this.state.songList[index].reference) {
+                if (state.currentSong?.reference == songs[index]?.reference) {
                   return Icon(Icons.equalizer,
                       color: Theme.of(context).primaryColor);
                 } else {
@@ -50,7 +51,7 @@ class SongList extends StatelessWidget {
               //* Song image
               BlocBuilder<GetSongArtcubit, GetSongArtState>(
                   bloc: GetSongArtcubit(context.read<SongUseCases>())
-                    ..getSongArt(state.songList[index].id),
+                    ..getSongArt(songs[index]?.id),
                   builder: (context, state) {
                     if (state is GetSongArtStateLoading) {
                       return const ClipOval(
@@ -89,7 +90,7 @@ class SongList extends StatelessWidget {
                     // * Song title
 
                     Text(
-                      state.songList[index].name ?? 'none',
+                      songs[index]?.name ?? 'none',
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
@@ -100,7 +101,7 @@ class SongList extends StatelessWidget {
 
                     // * Song artist
                     Text(
-                      state.songList[index].artist ?? 'Unknown',
+                      songs[index]?.artist ?? 'Unknown',
                       style: const TextStyle(
                         color: Color.fromRGBO(255, 255, 255, 0.4),
                       ),
@@ -117,7 +118,7 @@ class SongList extends StatelessWidget {
               // * Song duration
 
               Text(
-                miliSecondsToMinutesFormat(state.songList[index].duration),
+                miliSecondsToMinutesFormat(songs[index]?.duration),
                 style: const TextStyle(
                     color: Color.fromRGBO(255, 255, 255, 0.3), fontSize: 12),
               )

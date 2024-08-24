@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   // * SONG LIST
                   return SongList(
-                    state: state,
+                    songs: state.songList,
                   );
                 } else {
                   return const Center(
