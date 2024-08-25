@@ -85,21 +85,16 @@ class PlayerCubit extends Cubit<PlayerState> {
 
     // get current song index in the playlist
     final currentSongIndex = state.playList
-        .indexWhere((song) => song?.reference == state.currentSong?.reference!);
+        .indexWhere((song) => song.reference == state.currentSong?.reference!);
 
     // if there is a next song then play it
     if (currentSongIndex >= 0 && currentSongIndex < state.playList.length - 1) {
       final nextSong = state.playList[currentSongIndex + 1];
 
-      if (nextSong != null) {
-        playSong(nextSong);
-        return true;
-      } else {
-        emit(state.copyWith(status: PlayerStatus.stopped));
-        return false;
-      }
+      playSong(nextSong);
+      return true;
     }
-
+    emit(state.copyWith(status: PlayerStatus.stopped));
     return false;
   }
 
@@ -111,23 +106,18 @@ class PlayerCubit extends Cubit<PlayerState> {
     // get current song index in the playlist
 
     final currentSongIndex = state.playList.indexWhere((song) {
-      return song?.id == state.currentSong?.id;
+      return song.id == state.currentSong?.id;
     });
 
     // if there is a prevous song then play it
-
     if (currentSongIndex > 0) {
       final previousSong = state.playList[currentSongIndex - 1];
 
-      if (previousSong != null) {
-        playSong(previousSong);
-        return true;
-      } else {
-        emit(state.copyWith(status: PlayerStatus.stopped));
-        return false;
-      }
+      playSong(previousSong);
+      return true;
     }
-
+    // Otherwise stopped.
+    emit(state.copyWith(status: PlayerStatus.stopped));
     return false;
   }
 
@@ -154,14 +144,10 @@ class PlayerCubit extends Cubit<PlayerState> {
   bool _playShuffleSong() {
     final int randomSongIndex = _random.nextInt(state.playList.length - 1);
 
-    final Song? randomSong = state.playList[randomSongIndex];
+    final Song randomSong = state.playList[randomSongIndex];
 
-    if (randomSong != null) {
-      playSong(randomSong);
-      return true;
-    }
-
-    return false;
+    playSong(randomSong);
+    return true;
   }
 
   void _autoPlayNextSongOnPlayList() {
@@ -182,17 +168,17 @@ class PlayerCubit extends Cubit<PlayerState> {
 
     // get current song index in the playlist
     final currentSongIndex = state.playList
-        .indexWhere((song) => song?.reference == state.currentSong?.reference!);
+        .indexWhere((song) => song.reference == state.currentSong?.reference!);
 
     // if there is a next song then play it
     if (currentSongIndex >= 0 && currentSongIndex < state.playList.length - 1) {
       final nextSong = state.playList[currentSongIndex + 1];
 
-      if (nextSong != null) {
-        playSong(nextSong);
-      } else {
-        emit(state.copyWith(status: PlayerStatus.stopped));
-      }
+      playSong(nextSong);
+      return;
     }
+
+    emit(state.copyWith(status: PlayerStatus.stopped));
+    return;
   }
 }

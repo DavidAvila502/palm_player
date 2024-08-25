@@ -11,7 +11,7 @@ enum PlayMode {
 
 class PlayerState extends Equatable {
   final Song? currentSong;
-  final List<Song?> playList;
+  final List<Song> playList;
   final PlayerStatus status;
   final PlayMode playMode;
   final bool isShuffle;
@@ -27,7 +27,7 @@ class PlayerState extends Equatable {
 
   PlayerState copyWith({
     Song? currentSong,
-    List<Song?>? playList,
+    List<Song>? playList,
     PlayerStatus? status,
     PlayMode? playMode,
     bool? isShuffle,
