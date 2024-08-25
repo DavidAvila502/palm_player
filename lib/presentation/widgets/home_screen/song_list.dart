@@ -9,7 +9,7 @@ import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_s
 import 'package:palm_player/presentation/utils/miliseconds_to_minutes.dart';
 
 class SongList extends StatelessWidget {
-  final List<Song?> songs;
+  final List<Song> songs;
   const SongList({super.key, required this.songs});
 
   @override
@@ -28,14 +28,12 @@ class SongList extends StatelessWidget {
           //* Song list item
           return GestureDetector(
             onTap: () {
-              songs[index] != null
-                  ? context.read<PlayerCubit>().playSong(songs[index]!)
-                  : null;
+              context.read<PlayerCubit>().playSong(songs[index]);
             },
             child: Row(children: <Widget>[
               // * Playing icon
               BlocBuilder<PlayerCubit, PlayerState>(builder: (context, state) {
-                if (state.currentSong?.reference == songs[index]?.reference) {
+                if (state.currentSong?.reference == songs[index].reference) {
                   return Icon(Icons.equalizer,
                       color: Theme.of(context).primaryColor);
                 } else {
@@ -51,7 +49,7 @@ class SongList extends StatelessWidget {
               //* Song image
               BlocBuilder<GetSongArtcubit, GetSongArtState>(
                   bloc: GetSongArtcubit(context.read<SongUseCases>())
-                    ..getSongArt(songs[index]?.id),
+                    ..getSongArt(songs[index].id),
                   builder: (context, state) {
                     if (state is GetSongArtStateLoading) {
                       return const SizedBox(
@@ -98,7 +96,7 @@ class SongList extends StatelessWidget {
                     // * Song title
 
                     Text(
-                      songs[index]?.name ?? 'none',
+                      songs[index].name ?? 'none',
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
@@ -109,7 +107,7 @@ class SongList extends StatelessWidget {
 
                     // * Song artist
                     Text(
-                      songs[index]?.artist ?? 'Unknown',
+                      songs[index].artist ?? 'Unknown',
                       style: const TextStyle(
                         color: Color.fromRGBO(255, 255, 255, 0.4),
                       ),
@@ -126,7 +124,7 @@ class SongList extends StatelessWidget {
               // * Song duration
 
               Text(
-                miliSecondsToMinutesFormat(songs[index]?.duration),
+                miliSecondsToMinutesFormat(songs[index].duration),
                 style: const TextStyle(
                     color: Color.fromRGBO(255, 255, 255, 0.3), fontSize: 12),
               )
