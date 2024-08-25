@@ -54,25 +54,33 @@ class SongList extends StatelessWidget {
                     ..getSongArt(songs[index]?.id),
                   builder: (context, state) {
                     if (state is GetSongArtStateLoading) {
-                      return const ClipOval(
-                        child: CircularProgressIndicator(),
+                      return const SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: ClipOval(
+                          child: CircularProgressIndicator(),
+                        ),
                       );
                     } else if (state is GetSongArtStateLoaded) {
-                      return ClipOval(
-                          child: state.albumArt != null
-                              ? Image.memory(
-                                  state.albumArt!,
-                                  height: 50,
-                                )
-                              : Container(
-                                  height: 50,
-                                  width: 50,
-                                  color: Colors.white,
-                                  child: const Icon(
-                                    Icons.image_not_supported,
-                                    size: 30,
-                                  ),
-                                ));
+                      return SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: ClipOval(
+                            child: state.albumArt != null
+                                ? Image.memory(
+                                    state.albumArt!,
+                                    height: 50,
+                                  )
+                                : Container(
+                                    height: 50,
+                                    width: 50,
+                                    color: Colors.white,
+                                    child: const Icon(
+                                      Icons.image_not_supported,
+                                      size: 30,
+                                    ),
+                                  )),
+                      );
                     } else {
                       return Container();
                     }
