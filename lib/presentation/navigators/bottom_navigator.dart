@@ -28,7 +28,7 @@ class _BottomNavigator extends State<BottomNavigator> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
+    double screenHeight = MediaQuery.sizeOf(context).height;
     double bottomNavigationBarHeight = kBottomNavigationBarHeight;
 
     return Scaffold(
