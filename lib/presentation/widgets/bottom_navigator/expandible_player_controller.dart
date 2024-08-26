@@ -127,6 +127,10 @@ class _ExpandiblePlayerControllerState
               .read<GetSongArtcubit>()
               .getSongArt(context.read<PlayerCubit>().state.currentSong?.id);
           setIsRotating(true);
+        } else if (state.status == PlayerStatus.stopped) {
+          setIsRotating(false);
+        } else if (state.status == PlayerStatus.paused) {
+          setIsRotating(false);
         }
       },
       child: Stack(
@@ -173,14 +177,12 @@ class _ExpandiblePlayerControllerState
                               ? ExpandiblePlayerSamallContent(
                                   key: const ValueKey(1),
                                   isRotating: _isRotating,
-                                  setIsRotating: setIsRotating,
                                   expandDraggableToMaxSize:
                                       expandDraggableToMaxSize,
                                 )
                               : ExpandiblePlayerLargeContent(
                                   key: const ValueKey(2),
                                   isRotating: _isRotating,
-                                  setIsRotating: setIsRotating,
                                   collapseDraggableToMinSize:
                                       collapseDraggableToMinSize,
                                 ),

@@ -74,7 +74,7 @@ class PlayerCubit extends Cubit<PlayerState> {
     try {
       if (_audioPlayer.playerState.playing == false) {
         emit(state.copyWith(status: PlayerStatus.playing));
-        await _audioPlayer.play();
+        _audioPlayer.play();
       }
     } catch (_) {
       emit(state.copyWith(
