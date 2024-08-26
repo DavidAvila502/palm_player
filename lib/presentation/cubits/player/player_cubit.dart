@@ -7,6 +7,7 @@ import 'package:palm_player/presentation/cubits/player/player_state.dart';
 class PlayerCubit extends Cubit<PlayerState> {
   final audio_play.AudioPlayer _audioPlayer;
   bool _isPlaySongLoading = false;
+  bool _isPlayListLoadingg = false;
   final Random _random = Random();
   int _repeat = 1;
 
@@ -20,6 +21,8 @@ class PlayerCubit extends Cubit<PlayerState> {
   }
 
   void setPlayList(List<Song> playList) {
+    if (_isPlayListLoadingg) return;
+    _isPlayListLoadingg = true;
     try {
       if (playList != state.playList) {
         emit(state.copyWith(
@@ -30,6 +33,8 @@ class PlayerCubit extends Cubit<PlayerState> {
           status: PlayerStatus.error,
           errorMessage: 'Error trying to set the PlayList.'));
     }
+
+    _isPlayListLoadingg = false;
   }
 
   Future<void> playSong(Song currentSong, [int mightRepeatTimes = 1]) async {

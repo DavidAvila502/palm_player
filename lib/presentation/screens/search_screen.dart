@@ -1,12 +1,9 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:palm_player/domain/entities/song.dart';
 import 'package:palm_player/presentation/cubits/song/get_all_songs/get_all_songs_cubit.dart';
 import 'package:palm_player/presentation/cubits/song/get_all_songs/get_all_songs_state.dart';
 import 'package:palm_player/presentation/widgets/home_screen/song_list.dart';
-
-// TODO: SET A PLAYLIST BASED ON THE FITLER
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -16,8 +13,8 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  List<Song?> allSongs = [];
-  List<Song?> filteredSongs = [];
+  List<Song> allSongs = [];
+  List<Song> filteredSongs = [];
   late TextEditingController searchController;
 
   @override
@@ -37,11 +34,7 @@ class _SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    final List<Song?> newSongs = allSongs.where((song) {
-      if (song == null) {
-        return false;
-      }
-
+    final List<Song> newSongs = allSongs.where((song) {
       if (song.name!
           .toLowerCase()
           .contains(searchController.text.toLowerCase())) {
@@ -51,11 +44,9 @@ class _SearchScreenState extends State<SearchScreen> {
       return false;
     }).toList();
 
-    if (!(const DeepCollectionEquality().equals(filteredSongs, newSongs))) {
-      setState(() {
-        filteredSongs = newSongs;
-      });
-    }
+    setState(() {
+      filteredSongs = newSongs;
+    });
 
     return;
   }

@@ -28,6 +28,7 @@ class SongList extends StatelessWidget {
           //* Song list item
           return GestureDetector(
             onTap: () {
+              context.read<PlayerCubit>().setPlayList(songs);
               context.read<PlayerCubit>().playSong(songs[index]);
             },
             child: Row(children: <Widget>[
