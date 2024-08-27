@@ -64,7 +64,9 @@ class SongList extends StatelessWidget {
                       return SizedBox(
                         height: 50,
                         width: 50,
-                        child: ClipOval(
+                        child: ClipRRect(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10)),
                             child: state.albumArt != null
                                 ? Image.memory(
                                     state.albumArt!,
