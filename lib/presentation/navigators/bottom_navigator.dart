@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:palm_player/presentation/screens/home_screen.dart';
+import 'package:palm_player/presentation/navigators/top_navigator.dart';
 import 'package:palm_player/presentation/screens/search_screen.dart';
 import 'package:palm_player/presentation/screens/settings_screen.dart';
 import 'package:palm_player/presentation/widgets/bottom_navigator/expandible_player_controller.dart';
@@ -13,7 +13,7 @@ class BottomNavigator extends StatefulWidget {
 
 class _BottomNavigator extends State<BottomNavigator> {
   final List<Widget> _screens = const [
-    HomeScreen(),
+    TopNavigator(),
     SearchScreen(),
     SettingsScreen()
   ];
