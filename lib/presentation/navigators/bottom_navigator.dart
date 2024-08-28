@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:palm_player/presentation/navigators/top_navigator.dart';
 import 'package:palm_player/presentation/screens/search_screen.dart';
+import 'package:palm_player/presentation/screens/selected_album_screen.dart';
 import 'package:palm_player/presentation/screens/settings_screen.dart';
+import 'package:palm_player/presentation/utils/handle_bottom_navigation_index.dart';
 import 'package:palm_player/presentation/widgets/bottom_navigator/expandible_player_controller.dart';
 
 class BottomNavigator extends StatefulWidget {
@@ -15,7 +18,8 @@ class _BottomNavigator extends State<BottomNavigator> {
   final List<Widget> _screens = const [
     TopNavigator(),
     SearchScreen(),
-    SettingsScreen()
+    SettingsScreen(),
+    SelectedAlbumScreen()
   ];
   int _selectedIndex = 0;
   bool _isExpandibleSmall = true;
@@ -23,6 +27,12 @@ class _BottomNavigator extends State<BottomNavigator> {
   void setIsExpandibleSmall(bool param) {
     setState(() {
       _isExpandibleSmall = param;
+    });
+  }
+
+  void setSelectedScreen(int index) {
+    setState(() {
+      _selectedIndex = index;
     });
   }
 
@@ -35,19 +45,23 @@ class _BottomNavigator extends State<BottomNavigator> {
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color.fromRGBO(26, 27, 32, 1),
       body: SafeArea(
-          child: Stack(children: [
-        IndexedStack(index: _selectedIndex, children: _screens),
-        Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: SizedBox(
-                height: screenHeight * 1,
-                child: ExpandiblePlayerController(
-                  notifyToBottomNavigatorExpandibleIsSmall:
-                      setIsExpandibleSmall,
-                )))
-      ])),
+          child: RepositoryProvider<HandleBottomNavigationIndex>(
+        create: (context) =>
+            HandleBottomNavigationIndex(setSelectedScreen: setSelectedScreen),
+        child: Stack(children: [
+          IndexedStack(index: _selectedIndex, children: _screens),
+          Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: SizedBox(
+                  height: screenHeight * 1,
+                  child: ExpandiblePlayerController(
+                    notifyToBottomNavigatorExpandibleIsSmall:
+                        setIsExpandibleSmall,
+                  )))
+        ]),
+      )),
       bottomNavigationBar: AnimatedContainer(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
@@ -87,9 +101,7 @@ class _BottomNavigator extends State<BottomNavigator> {
                       selectedItemColor: Theme.of(context).primaryColor,
                       unselectedItemColor: Colors.grey,
                       onTap: (int index) {
-                        setState(() {
-                          _selectedIndex = index;
-                        });
+                        setSelectedScreen(index);
                       },
                     ),
                   )
