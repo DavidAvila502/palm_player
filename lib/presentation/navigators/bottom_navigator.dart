@@ -5,6 +5,8 @@ import 'package:palm_player/presentation/screens/search_screen.dart';
 import 'package:palm_player/presentation/screens/selected_album_screen.dart';
 import 'package:palm_player/presentation/screens/settings_screen.dart';
 import 'package:palm_player/presentation/utils/handle_bottom_navigation_index.dart';
+import 'package:palm_player/presentation/widgets/bottom_navigator/custom_bottom_navigation_bar.dart';
+import 'package:palm_player/presentation/widgets/bottom_navigator/custom_bottom_navigation_bar_item.dart';
 import 'package:palm_player/presentation/widgets/bottom_navigator/expandible_player_controller.dart';
 
 class BottomNavigator extends StatefulWidget {
@@ -23,6 +25,7 @@ class _BottomNavigator extends State<BottomNavigator> {
   ];
   int _selectedIndex = 0;
   bool _isExpandibleSmall = true;
+  bool showHiddenScreen = false;
 
   void setIsExpandibleSmall(bool param) {
     setState(() {
@@ -40,6 +43,7 @@ class _BottomNavigator extends State<BottomNavigator> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.sizeOf(context).height;
     double bottomNavigationBarHeight = kBottomNavigationBarHeight;
+    // final visibleScreens = showHiddenScreen ? _screens : _screens.sublist(0, 3);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -87,19 +91,18 @@ class _BottomNavigator extends State<BottomNavigator> {
                     borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30)),
-                    child: BottomNavigationBar(
-                      backgroundColor: Colors.black,
-                      items: const <BottomNavigationBarItem>[
-                        BottomNavigationBarItem(
-                            icon: Icon(Icons.home), label: 'Home'),
-                        BottomNavigationBarItem(
-                            icon: Icon(Icons.search), label: 'Search'),
-                        BottomNavigationBarItem(
-                            icon: Icon(Icons.settings), label: 'Settings'),
-                      ],
-                      currentIndex: _selectedIndex,
+                    child: CustomBottomNavigationBar(
                       selectedItemColor: Theme.of(context).primaryColor,
-                      unselectedItemColor: Colors.grey,
+                      selectedIndex: _selectedIndex,
+                      backgroundColor: Colors.black,
+                      items: const <CustomBottomNavigationBarItem>[
+                        CustomBottomNavigationBarItem(
+                            icon: Icons.home, label: 'Home'),
+                        CustomBottomNavigationBarItem(
+                            icon: Icons.search, label: 'Search'),
+                        CustomBottomNavigationBarItem(
+                            icon: Icons.settings, label: 'Settings')
+                      ],
                       onTap: (int index) {
                         setSelectedScreen(index);
                       },
