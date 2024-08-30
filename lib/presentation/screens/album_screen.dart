@@ -15,22 +15,35 @@ class _AlbumScreen extends State<AlbumScreen> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.sizeOf(context).height;
-    return Column(children: [
-      Expanded(
-        child: BlocBuilder<GetAlbumsCubit, GetAlbumsState>(
-            builder: (BuildContext context, state) {
-          if (state is GetAlbumsStateLoaded) {
-            return AlbumList(
-              albums: state.albums,
-            );
-          } else {
-            return const Text(
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      BlocBuilder<GetAlbumsCubit, GetAlbumsState>(
+          builder: (BuildContext context, state) {
+        if (state is GetAlbumsStateLoaded) {
+          return state.albums.isNotEmpty
+              ? Expanded(
+                  child: AlbumList(
+                    albums: state.albums,
+                  ),
+                )
+              : const Center(
+                  child: Text(
+                    'Nothing to show.',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                );
+        } else if (state is GetAlbumsStateLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          return const Center(
+            child: Text(
               'Nothing to show.',
               style: TextStyle(color: Colors.white),
-            );
-          }
-        }),
-      ),
+            ),
+          );
+        }
+      }),
       SizedBox(height: screenHeight * 0.1)
     ]);
   }
