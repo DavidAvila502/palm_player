@@ -27,8 +27,7 @@ class CustomBottomNavigationBar extends StatefulWidget {
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
-    const double bottomNavigationBarHeight =
-        kBottomNavigationBarHeight + (kBottomNavigationBarHeight * 0.2);
+    const double bottomNavigationBarHeight = kBottomNavigationBarHeight;
     return Container(
       height: bottomNavigationBarHeight,
       decoration: BoxDecoration(color: widget.backgroundColor),
