@@ -31,7 +31,7 @@ class AlbumList extends StatelessWidget {
                 child: Stack(
                   children: [
                     // * ALBUM IMAGE
-                    Expanded(
+                    SizedBox.expand(
                         child: BlocBuilder<GetAlbumArtCubit, GetAlbumArtState>(
                             bloc:
                                 GetAlbumArtCubit(context.read<AlbumUseCases>())
