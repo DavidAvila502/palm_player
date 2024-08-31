@@ -4,6 +4,7 @@ import 'package:palm_player/domain/entities/album.dart';
 import 'package:palm_player/domain/use_cases/album_use_cases.dart';
 import 'package:palm_player/presentation/cubits/album/get_album_art/get_album_art_cubit.dart';
 import 'package:palm_player/presentation/cubits/album/get_album_art/get_album_art_state.dart';
+import 'package:palm_player/presentation/cubits/album/set_current_album/set_current_album_cubit.dart';
 import 'package:palm_player/presentation/utils/handle_bottom_navigation_index.dart';
 
 class AlbumList extends StatelessWidget {
@@ -20,6 +21,9 @@ class AlbumList extends StatelessWidget {
           // * Container and styles
           return GestureDetector(
             onTap: () {
+              context
+                  .read<SetCurrentAlbumCubit>()
+                  .setCurrentAlbum(albums[index]);
               context.read<HandleBottomNavigationIndex>().setSelectedScreen(3);
             },
             child: ClipRRect(
