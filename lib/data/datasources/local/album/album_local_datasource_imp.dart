@@ -43,7 +43,7 @@ class AlbumLocalDatasourceImp extends AlbumLocalDatasource {
   @override
   Future<List<SongModel>> getAlbumSongs(int id) async {
     List<audio_query.SongModel> data = await _onAudioQuery.queryAudiosFrom(
-        audio_query.AudiosFromType.ALBUM, id);
+        audio_query.AudiosFromType.ALBUM_ID, id);
 
     List<SongModel> songs = data
         .map((currentSong) => SongModel(
