@@ -13,6 +13,7 @@ class SelectedAlbumScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // * Hide button
         const Row(
           children: [
             SizedBox(
@@ -29,6 +30,8 @@ class SelectedAlbumScreen extends StatelessWidget {
         const SizedBox(
           height: 10,
         ),
+
+        // * Content
         BlocBuilder<SetCurrentAlbumCubit, SetCurrentAlbumState>(
             builder: (BuildContext context, state) {
           if (state is SetCurrentAlbumStateLoaded) {
@@ -36,6 +39,7 @@ class SelectedAlbumScreen extends StatelessWidget {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                // * Album Widget ******
                 Stack(
                   alignment: Alignment.center,
                   children: [
@@ -44,6 +48,8 @@ class SelectedAlbumScreen extends StatelessWidget {
                       // decoration:
                       //     BoxDecoration(color: Colors.amber.withOpacity(0.1)),
                     ),
+
+                    // * Name and Artist
                     Positioned(
                         bottom: 0,
                         left: 20,
@@ -78,6 +84,8 @@ class SelectedAlbumScreen extends StatelessWidget {
                             ],
                           ),
                         )),
+
+                    // * Album Image
                     Positioned(
                       bottom: 100,
                       child: BlocBuilder<GetAlbumArtCubit, GetAlbumArtState>(
@@ -85,7 +93,11 @@ class SelectedAlbumScreen extends StatelessWidget {
                             ..getAlbumArt(state.album.id),
                           builder: (context, state) {
                             if (state is GetAlbumArtStateLoaded) {
-                              return SizedBox(
+                              return Container(
+                                  decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(20))),
                                   height: 130,
                                   width: 130,
                                   child: ClipRRect(
@@ -101,7 +113,11 @@ class SelectedAlbumScreen extends StatelessWidget {
                                           ),
                                   ));
                             } else {
-                              return SizedBox(
+                              return Container(
+                                  decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(20))),
                                   height: 130,
                                   width: 130,
                                   child: ClipRRect(
@@ -115,7 +131,7 @@ class SelectedAlbumScreen extends StatelessWidget {
                   ],
                 ),
 
-                // * BUttons
+                // * Buttons
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
