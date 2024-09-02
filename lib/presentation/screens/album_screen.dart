@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:palm_player/data/datasources/local/album/album_local_datasource_imp.dart';
-import 'package:palm_player/data/repositories/album_repository_imp.dart';
-import 'package:palm_player/domain/entities/album.dart';
-import 'package:palm_player/domain/use_cases/album_use_cases.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:palm_player/presentation/cubits/album/get_albums/get_albums_cubit.dart';
+import 'package:palm_player/presentation/cubits/album/get_albums/get_albums_state.dart';
+import 'package:palm_player/presentation/widgets/album_screen/album_list.dart';
 
 class AlbumScreen extends StatefulWidget {
   const AlbumScreen({super.key});
@@ -12,82 +12,39 @@ class AlbumScreen extends StatefulWidget {
 }
 
 class _AlbumScreen extends State<AlbumScreen> {
-  final AlbumUseCases _albumUsecases = AlbumUseCases(
-      AlbumRepositoryImp(albumLocalDatasource: AlbumLocalDatasourceImp()));
-
-  List<Album> albumList = [];
-
-  Future<void> getAlbums() async {
-    List<Album> albums = await _albumUsecases.getAlbums();
-
-    setState(() {
-      albumList = albums;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text(
-          'Coming soon.',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ]),
-    );
-
-    // return Column(
-    //   children: [
-    //     const SizedBox(
-    //       height: 40,
-    //     ),
-
-    //     ElevatedButton(onPressed: getAlbums, child: const Text('Fetch albums')),
-
-    //     const SizedBox(
-    //       height: 20,
-    //     ),
-
-    //     // List of albums
-
-    //     SizedBox(
-    //       height: 500,
-    //       child: ListView.separated(
-    //           itemCount: albumList.length,
-    //           separatorBuilder: (BuildContext context, int index) {
-    //             return const Divider();
-    //           },
-    //           itemBuilder: (BuildContext context, int index) {
-    //             return Column(
-    //               children: [
-    //                 FutureBuilder(
-    //                     future: _albumUsecases.getAlbumArt(albumList[index].id),
-    //                     builder: (BuildContext context, snapShot) {
-    //                       return SizedBox(
-    //                         height: 80,
-    //                         width: 80,
-    //                         child: snapShot.hasData
-    //                             ? Image.memory(snapShot.data!)
-    //                             : const Center(
-    //                                 child: CircularProgressIndicator(
-    //                                   color: Colors.black,
-    //                                 ),
-    //                               ),
-    //                       );
-    //                     }),
-    //                 Container(
-    //                   color: Colors.black,
-    //                   padding: const EdgeInsets.all(5),
-    //                   child: Text(
-    //                     albumList[index].name!,
-    //                     style: const TextStyle(color: Colors.white),
-    //                   ),
-    //                 )
-    //               ],
-    //             );
-    //           }),
-    //     )
-    //   ],
-    // );
+    final double screenHeight = MediaQuery.sizeOf(context).height;
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      BlocBuilder<GetAlbumsCubit, GetAlbumsState>(
+          builder: (BuildContext context, state) {
+        if (state is GetAlbumsStateLoaded) {
+          return state.albums.isNotEmpty
+              ? Expanded(
+                  child: AlbumList(
+                    albums: state.albums,
+                  ),
+                )
+              : const Center(
+                  child: Text(
+                    'Nothing to show.',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                );
+        } else if (state is GetAlbumsStateLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          return const Center(
+            child: Text(
+              'Nothing to show.',
+              style: TextStyle(color: Colors.white),
+            ),
+          );
+        }
+      }),
+      SizedBox(height: screenHeight * 0.1)
+    ]);
   }
 }

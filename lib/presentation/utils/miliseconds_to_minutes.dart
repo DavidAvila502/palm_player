@@ -1,6 +1,6 @@
 String miliSecondsToMinutesFormat(int? miliseconds) {
   if (miliseconds == null) {
-    return 'Unknown';
+    return '0:00';
   }
   // * Calculate the Minute
 

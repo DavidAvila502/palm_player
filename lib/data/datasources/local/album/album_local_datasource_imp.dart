@@ -3,12 +3,21 @@ import 'package:palm_player/data/datasources/local/album/album_local_datasource.
 import 'package:palm_player/data/models/album_model.dart';
 import 'package:on_audio_query/on_audio_query.dart ' as audio_query;
 import 'package:palm_player/data/models/song_model.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AlbumLocalDatasourceImp extends AlbumLocalDatasource {
   final audio_query.OnAudioQuery _onAudioQuery = audio_query.OnAudioQuery();
 
   @override
   Future<List<AlbumModel>> getAlbums() async {
+    if (!await Permission.audio.isGranted) {
+      await Permission.audio.request();
+    }
+
+    if (!await Permission.audio.isGranted) {
+      return [];
+    }
+
     List<audio_query.AlbumModel> data = await _onAudioQuery.queryAlbums();
 
     List<AlbumModel> albums = data
@@ -34,7 +43,7 @@ class AlbumLocalDatasourceImp extends AlbumLocalDatasource {
   @override
   Future<List<SongModel>> getAlbumSongs(int id) async {
     List<audio_query.SongModel> data = await _onAudioQuery.queryAudiosFrom(
-        audio_query.AudiosFromType.ALBUM, id);
+        audio_query.AudiosFromType.ALBUM_ID, id);
 
     List<SongModel> songs = data
         .map((currentSong) => SongModel(

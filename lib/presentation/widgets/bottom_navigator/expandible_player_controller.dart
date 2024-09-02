@@ -121,12 +121,16 @@ class _ExpandiblePlayerControllerState
   Widget build(BuildContext context) {
     return BlocListener<PlayerCubit, PlayerState>(
       listener: (context, state) {
-        if (state is PlayerStatePlaying) {
+        if (state.status == PlayerStatus.playing) {
           // Update Global Song Image
           context
               .read<GetSongArtcubit>()
               .getSongArt(context.read<PlayerCubit>().state.currentSong?.id);
           setIsRotating(true);
+        } else if (state.status == PlayerStatus.stopped) {
+          setIsRotating(false);
+        } else if (state.status == PlayerStatus.paused) {
+          setIsRotating(false);
         }
       },
       child: Stack(
@@ -173,14 +177,12 @@ class _ExpandiblePlayerControllerState
                               ? ExpandiblePlayerSamallContent(
                                   key: const ValueKey(1),
                                   isRotating: _isRotating,
-                                  setIsRotating: setIsRotating,
                                   expandDraggableToMaxSize:
                                       expandDraggableToMaxSize,
                                 )
                               : ExpandiblePlayerLargeContent(
                                   key: const ValueKey(2),
                                   isRotating: _isRotating,
-                                  setIsRotating: setIsRotating,
                                   collapseDraggableToMinSize:
                                       collapseDraggableToMinSize,
                                 ),

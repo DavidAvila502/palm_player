@@ -7,6 +7,8 @@ import 'package:palm_player/data/repositories/album_repository_imp.dart';
 import 'package:palm_player/data/repositories/song_repository_imp.dart';
 import 'package:palm_player/domain/use_cases/album_use_cases.dart';
 import 'package:palm_player/domain/use_cases/song_use_cases.dart';
+import 'package:palm_player/presentation/cubits/album/get_albums/get_albums_cubit.dart';
+import 'package:palm_player/presentation/cubits/album/set_current_album/set_current_album_cubit.dart';
 import 'package:palm_player/presentation/cubits/player/player_cubit.dart';
 import 'package:palm_player/presentation/cubits/progress/song_progress_cubit.dart';
 import 'package:palm_player/presentation/cubits/song/get_all_songs/get_all_songs_cubit.dart';
@@ -21,7 +23,7 @@ void main() {
     RepositoryProvider<AlbumUseCases>(
         create: (context) => AlbumUseCases(AlbumRepositoryImp(
             albumLocalDatasource: AlbumLocalDatasourceImp()))),
-    RepositoryProvider<AudioPlayer>(create: (context) => AudioPlayer())
+    RepositoryProvider<AudioPlayer>(create: (context) => AudioPlayer()),
   ], child: const MyApp()));
 }
 
@@ -53,7 +55,12 @@ class MyApp extends StatelessWidget {
                   GetSongArtcubit(context.read<SongUseCases>())),
           BlocProvider(
               create: (BuildContext context) =>
-                  SongProgressCubit(context.read<AudioPlayer>()))
+                  SongProgressCubit(context.read<AudioPlayer>())),
+          BlocProvider(
+            create: (BuildContext context) =>
+                GetAlbumsCubit(context.read<AlbumUseCases>())..getAlbums(),
+          ),
+          BlocProvider(create: (BuildContext context) => SetCurrentAlbumCubit())
         ],
         child: const BottomNavigator(),
       ),

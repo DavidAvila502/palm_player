@@ -18,11 +18,12 @@ class GetSongArtStateLoading extends GetSongArtState {
 
 class GetSongArtStateLoaded extends GetSongArtState {
   final Uint8List? albumArt;
+  final int? songId;
 
-  const GetSongArtStateLoaded(this.albumArt);
+  const GetSongArtStateLoaded(this.albumArt, this.songId);
 
   @override
-  List<Object?> get props => [albumArt];
+  List<Object?> get props => [albumArt, songId];
 }
 
 class GetSongArtStateError extends GetSongArtState {

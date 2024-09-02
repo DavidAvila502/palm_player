@@ -10,16 +10,14 @@ class GetAlbumSongsCubit extends Cubit<GetAlbumSongsState> {
       : super(const GetAlbumSongsStateInitial());
 
   Future<void> getAlbumSongs(int id) async {
-    if (state is! GetAlbumSongsStateLoaded) {
-      try {
-        emit(const GetAlbumSongsStateLoading());
+    try {
+      emit(const GetAlbumSongsStateLoading());
 
-        List<Song> response = await _albumUseCases.getAlbumSongs(id);
+      List<Song> response = await _albumUseCases.getAlbumSongs(id);
 
-        emit(GetAlbumSongsStateLoaded(response));
-      } catch (_) {
-        emit(const GetAlbumSongsStateError('Error trying to load the songs.'));
-      }
+      emit(GetAlbumSongsStateLoaded(response));
+    } catch (_) {
+      emit(const GetAlbumSongsStateError('Error trying to load the songs.'));
     }
   }
 }
