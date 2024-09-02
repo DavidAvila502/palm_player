@@ -15,15 +15,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.sizeOf(context).height;
-    final double screenWidth = MediaQuery.sizeOf(context).width;
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: screenHeight * 0.7,
-            width: screenWidth * 0.9,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(
+          height: 20,
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: BlocBuilder<GetAllSongsCubit, GetAllSongsState>(
               builder: (context, state) {
                 if (state is GetAllSongsStateLoading) {
@@ -63,8 +64,11 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
-        ],
-      ),
+        ),
+        SizedBox(
+          height: screenHeight * 0.1,
+        )
+      ],
     );
   }
 }
