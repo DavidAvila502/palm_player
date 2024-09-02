@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:palm_player/domain/entities/song.dart';
 import 'package:palm_player/presentation/cubits/player/player_cubit.dart';
 import 'package:palm_player/presentation/cubits/player/player_state.dart';
 import 'package:palm_player/presentation/cubits/song/get_song_art/get_song_art_cubit.dart';
@@ -119,13 +120,18 @@ class _ExpandiblePlayerControllerState
 
   @override
   Widget build(BuildContext context) {
+    final Song? oldCurrentSong = context.read<PlayerCubit>().state.currentSong;
+
     return BlocListener<PlayerCubit, PlayerState>(
       listener: (context, state) {
-        if (state.status == PlayerStatus.playing) {
-          // Update Global Song Image
+        // * Change song art always that currentSong change
+        if (oldCurrentSong != state.currentSong) {
           context
               .read<GetSongArtcubit>()
               .getSongArt(context.read<PlayerCubit>().state.currentSong?.id);
+        }
+
+        if (state.status == PlayerStatus.playing) {
           setIsRotating(true);
         } else if (state.status == PlayerStatus.stopped) {
           setIsRotating(false);
