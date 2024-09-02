@@ -4,7 +4,11 @@ import 'package:palm_player/presentation/screens/home_screen.dart';
 
 class TopNavigator extends StatelessWidget {
   const TopNavigator({super.key});
-  final List<Widget> _screens = const [HomeScreen(), AlbumScreen()];
+  // final List<Widget> _screens = const [HomeScreen(), AlbumScreen()];
+  final List<Widget> _screens = const [
+    KeepAlivePage(child: HomeScreen()),
+    KeepAlivePage(child: AlbumScreen()),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -28,4 +32,25 @@ class TopNavigator extends StatelessWidget {
           body: TabBarView(children: _screens),
         ));
   }
+}
+
+class KeepAlivePage extends StatefulWidget {
+  final Widget child;
+
+  const KeepAlivePage({super.key, required this.child});
+
+  @override
+  State<KeepAlivePage> createState() => _KeepAlivePageState();
+}
+
+class _KeepAlivePageState extends State<KeepAlivePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }
