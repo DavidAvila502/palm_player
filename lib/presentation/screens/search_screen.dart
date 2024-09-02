@@ -58,7 +58,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.sizeOf(context).height;
-    final double screenWidth = MediaQuery.sizeOf(context).width;
 
     return BlocListener<GetAllSongsCubit, GetAllSongsState>(
       listener: (context, state) {
@@ -69,42 +68,49 @@ class _SearchScreenState extends State<SearchScreen> {
           filterSongs();
         }
       },
-      child: Center(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 15,
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 20,
+          ),
+
+          // * Seach bar
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Container(
+                padding: const EdgeInsets.only(left: 15),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.white, width: 0.3),
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
+                ),
+                child: TextField(
+                  controller: searchController,
+                  onChanged: onChangeText,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                      hintText: 'Enter a song name...',
+                      hintStyle:
+                          TextStyle(color: Color.fromRGBO(255, 255, 255, 0.4)),
+                      border: InputBorder.none),
+                )),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+
+          // * Song list
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: SongList(
+                songs: filteredSongs,
+              ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: Container(
-                  padding: const EdgeInsets.only(left: 15),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 0.3),
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                  ),
-                  child: TextField(
-                    controller: searchController,
-                    onChanged: onChangeText,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                        hintText: 'Enter a song name...',
-                        hintStyle: TextStyle(
-                            color: Color.fromRGBO(255, 255, 255, 0.4)),
-                        border: InputBorder.none),
-                  )),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            SizedBox(
-                height: screenHeight * 0.7,
-                width: screenWidth * 0.9,
-                child: SongList(
-                  songs: filteredSongs,
-                ))
-          ],
-        ),
+          ),
+          SizedBox(
+            height: screenHeight * 0.1,
+          )
+        ],
       ),
     );
   }
