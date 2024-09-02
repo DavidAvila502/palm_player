@@ -8,6 +8,7 @@ class PlayerCubit extends Cubit<PlayerState> {
   final audio_play.AudioPlayer _audioPlayer;
   bool _isPlaySongLoading = false;
   bool _isPlayListLoadingg = false;
+  bool _isSettingSong = false;
   final Random _random = Random();
   int _repeat = 1;
 
@@ -37,22 +38,41 @@ class PlayerCubit extends Cubit<PlayerState> {
     _isPlayListLoadingg = false;
   }
 
+  Future<void> setSong(Song song) async {
+    if (_isSettingSong) return;
+
+    _isSettingSong = true;
+
+    try {
+      await _audioPlayer.stop();
+      await _audioPlayer.setFilePath(song.reference!);
+      emit(state.copyWith(
+        status: PlayerStatus.paused,
+        currentSong: song,
+      ));
+
+      _isSettingSong = false;
+    } catch (_) {
+      emit(state.copyWith(
+          status: PlayerStatus.error,
+          errorMessage: 'Error trying to set the song.'));
+      _isSettingSong = false;
+    }
+  }
+
   Future<void> playSong(Song currentSong, [int mightRepeatTimes = 1]) async {
     if (_isPlaySongLoading) return;
     _isPlaySongLoading = true;
     try {
-      await _audioPlayer.stop();
-      await _audioPlayer.setFilePath(currentSong.reference!);
-      _isPlaySongLoading = false;
+      await setSong(currentSong);
       _audioPlayer.play();
       _repeat = mightRepeatTimes;
-      emit(state.copyWith(
-          status: PlayerStatus.playing, currentSong: currentSong));
+      emit(state.copyWith(status: PlayerStatus.playing));
+      _isPlaySongLoading = false;
     } catch (_) {
       emit(state.copyWith(
           status: PlayerStatus.error,
           errorMessage: 'Error trying to play the song.'));
-
       _isPlaySongLoading = false;
     }
   }
@@ -99,7 +119,15 @@ class PlayerCubit extends Cubit<PlayerState> {
       playSong(nextSong);
       return true;
     }
-    emit(state.copyWith(status: PlayerStatus.stopped));
+
+    if (state.playList.isNotEmpty) {
+      playSong(state.playList.first);
+
+      return true;
+    }
+
+    setSong(state.playList[currentSongIndex]);
+
     return false;
   }
 
@@ -109,7 +137,6 @@ class PlayerCubit extends Cubit<PlayerState> {
     }
 
     // get current song index in the playlist
-
     final currentSongIndex = state.playList.indexWhere((song) {
       return song.id == state.currentSong?.id;
     });
@@ -121,8 +148,14 @@ class PlayerCubit extends Cubit<PlayerState> {
       playSong(previousSong);
       return true;
     }
-    // Otherwise stopped.
-    emit(state.copyWith(status: PlayerStatus.stopped));
+
+    if (state.playList.isNotEmpty) {
+      playSong(state.playList.last);
+      return true;
+    }
+
+    setSong(state.playList[currentSongIndex]);
+
     return false;
   }
 
@@ -183,7 +216,15 @@ class PlayerCubit extends Cubit<PlayerState> {
       return;
     }
 
-    emit(state.copyWith(status: PlayerStatus.stopped));
+    // emit(state.copyWith(status: PlayerStatus.stopped));
+    if (state.playList.isNotEmpty) {
+      setSong(state.playList[0]);
+    } else {
+      setSong(state.playList[currentSongIndex]);
+    }
+
     return;
   }
+
+  void stopPlayer() {}
 }
