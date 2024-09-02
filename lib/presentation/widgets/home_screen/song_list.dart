@@ -35,10 +35,10 @@ class SongList extends StatelessWidget {
               // * Playing icon
               BlocBuilder<PlayerCubit, PlayerState>(builder: (context, state) {
                 if (state.currentSong?.reference == songs[index].reference) {
-                  return Icon(Icons.equalizer,
+                  return Icon(Icons.equalizer_rounded,
                       color: Theme.of(context).primaryColor);
                 } else {
-                  return const Icon(Icons.equalizer,
+                  return const Icon(Icons.equalizer_rounded,
                       color: Color.fromRGBO(255, 255, 255, 0.2));
                 }
               }),
