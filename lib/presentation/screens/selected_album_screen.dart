@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:palm_player/domain/entities/song.dart';
 import 'package:palm_player/domain/use_cases/album_use_cases.dart';
 import 'package:palm_player/presentation/cubits/album/get_album_art/get_album_art_cubit.dart';
 import 'package:palm_player/presentation/cubits/album/get_album_art/get_album_art_state.dart';
@@ -21,8 +20,6 @@ class SelectedAlbumScreen extends StatefulWidget {
 }
 
 class _SelectedAlbumScreenState extends State<SelectedAlbumScreen> {
-  List<Song> albumSongs = [];
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -167,88 +164,148 @@ class _SelectedAlbumScreenState extends State<SelectedAlbumScreen> {
                       height: 20,
                     ),
 
-                    // * Buttons
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // * Play button
-                        GestureDetector(
-                          onTap: () {
-                            if (albumSongs.isEmpty) {
-                              return;
-                            }
-                            context.read<PlayerCubit>().setPlayList(albumSongs);
+                    // * Buttons *********
+                    BlocBuilder<GetAlbumSongsCubit, GetAlbumSongsState>(
+                        builder: (context, state) {
+                      if (state is GetAlbumSongsStateLoaded) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // * Play button
+                            GestureDetector(
+                              onTap: () {
+                                if (state.songs.isEmpty) {
+                                  return;
+                                }
+                                context
+                                    .read<PlayerCubit>()
+                                    .setPlayList(state.songs);
 
-                            context.read<PlayerCubit>().playSong(albumSongs[0]);
-                          },
-                          child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 25),
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15)),
-                                  color: Theme.of(context).primaryColor),
-                              child: const Row(
-                                children: [
-                                  Icon(
-                                    Icons.play_arrow,
-                                    color: Colors.white,
-                                  ),
-                                  Text(
-                                    'Play',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 20),
-                                  ),
-                                ],
-                              )),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
+                                context
+                                    .read<PlayerCubit>()
+                                    .playSong(state.songs[0]);
+                              },
+                              child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 25),
+                                  decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(15)),
+                                      color: Theme.of(context).primaryColor),
+                                  child: const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.play_arrow,
+                                        color: Colors.white,
+                                      ),
+                                      Text(
+                                        'Play',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
 
-                        // * Shuffle button
-                        GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 25),
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.white, width: 0.5),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(15)),
-                                  color: const Color.fromRGBO(
-                                      255, 255, 255, 0.07)),
-                              child: const Row(
-                                children: [
-                                  Icon(
-                                    Icons.shuffle,
-                                    color: Colors.white,
-                                  ),
-                                  Text(
-                                    'Shuffle',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 20),
-                                  ),
-                                ],
-                              )),
-                        ),
-                      ],
-                    ),
+                            // * Shuffle button
+                            GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 25),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.white, width: 0.5),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(15)),
+                                      color: const Color.fromRGBO(
+                                          255, 255, 255, 0.07)),
+                                  child: const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.shuffle,
+                                        color: Colors.white,
+                                      ),
+                                      Text(
+                                        'Shuffle',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // * Play button
+                            Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 25),
+                                decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(15)),
+                                    color: Theme.of(context).primaryColor),
+                                child: const Row(
+                                  children: [
+                                    Icon(
+                                      Icons.play_arrow,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      'Play',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 20),
+                                    ),
+                                  ],
+                                )),
+                            const SizedBox(
+                              width: 20,
+                            ),
+
+                            // * Shuffle button
+                            GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 25),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.white, width: 0.5),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(15)),
+                                      color: const Color.fromRGBO(
+                                          255, 255, 255, 0.07)),
+                                  child: const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.shuffle,
+                                        color: Colors.white,
+                                      ),
+                                      Text(
+                                        'Shuffle',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                          ],
+                        );
+                      }
+                    }),
 
                     const SizedBox(
                       height: 20,
                     ),
 
                     // * SONGS *****
-                    BlocConsumer<GetAlbumSongsCubit, GetAlbumSongsState>(
-                      listener: (context, state) {
-                        if (state is GetAlbumSongsStateLoaded) {
-                          setState(() {
-                            albumSongs = state.songs;
-                          });
-                        }
-                      },
+                    BlocBuilder<GetAlbumSongsCubit, GetAlbumSongsState>(
                       builder: (BuildContext context, state) {
                         if (state is GetAlbumSongsStateLoaded) {
                           return Padding(
