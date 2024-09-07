@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:palm_player/domain/entities/song.dart';
 import 'package:palm_player/presentation/cubits/song/get_all_songs/get_all_songs_cubit.dart';
 import 'package:palm_player/presentation/cubits/song/get_all_songs/get_all_songs_state.dart';
-import 'package:palm_player/presentation/widgets/home_screen/song_list.dart';
+import 'package:palm_player/presentation/widgets/shared/song_list.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
