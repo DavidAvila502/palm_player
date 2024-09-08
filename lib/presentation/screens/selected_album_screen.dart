@@ -7,10 +7,9 @@ import 'package:palm_player/presentation/cubits/album/get_album_songs/get_album_
 import 'package:palm_player/presentation/cubits/album/get_album_songs/get_album_songs_state.dart';
 import 'package:palm_player/presentation/cubits/album/set_current_album/set_current_album_cubit.dart';
 import 'package:palm_player/presentation/cubits/album/set_current_album/set_current_album_state.dart';
-import 'package:palm_player/presentation/cubits/player/player_cubit.dart';
-import 'package:palm_player/presentation/cubits/player/player_state.dart';
 import 'package:palm_player/presentation/utils/handle_bottom_navigation_index.dart';
-import 'package:palm_player/presentation/utils/miliseconds_to_minutes.dart';
+import 'package:palm_player/presentation/widgets/selected_album_sreen/album_buttons.dart';
+import 'package:palm_player/presentation/widgets/selected_album_sreen/full_size_song_list.dart';
 
 class SelectedAlbumScreen extends StatefulWidget {
   const SelectedAlbumScreen({super.key});
@@ -168,135 +167,9 @@ class _SelectedAlbumScreenState extends State<SelectedAlbumScreen> {
                     BlocBuilder<GetAlbumSongsCubit, GetAlbumSongsState>(
                         builder: (context, state) {
                       if (state is GetAlbumSongsStateLoaded) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // * Play button
-                            GestureDetector(
-                              onTap: () {
-                                if (state.songs.isEmpty) {
-                                  return;
-                                }
-                                context
-                                    .read<PlayerCubit>()
-                                    .setPlayList(state.songs);
-
-                                context
-                                    .read<PlayerCubit>()
-                                    .playSong(state.songs[0]);
-                              },
-                              child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 25),
-                                  decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(15)),
-                                      color: Theme.of(context).primaryColor),
-                                  child: const Row(
-                                    children: [
-                                      Icon(
-                                        Icons.play_arrow,
-                                        color: Colors.white,
-                                      ),
-                                      Text(
-                                        'Play',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 20),
-                                      ),
-                                    ],
-                                  )),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-
-                            // * Shuffle button
-                            GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 25),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.white, width: 0.5),
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(15)),
-                                      color: const Color.fromRGBO(
-                                          255, 255, 255, 0.07)),
-                                  child: const Row(
-                                    children: [
-                                      Icon(
-                                        Icons.shuffle,
-                                        color: Colors.white,
-                                      ),
-                                      Text(
-                                        'Shuffle',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 20),
-                                      ),
-                                    ],
-                                  )),
-                            ),
-                          ],
-                        );
+                        return AlbumButtons(albumSongs: state.songs);
                       } else {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // * Play button
-                            Container(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 25),
-                                decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(15)),
-                                    color: Theme.of(context).primaryColor),
-                                child: const Row(
-                                  children: [
-                                    Icon(
-                                      Icons.play_arrow,
-                                      color: Colors.white,
-                                    ),
-                                    Text(
-                                      'Play',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 20),
-                                    ),
-                                  ],
-                                )),
-                            const SizedBox(
-                              width: 20,
-                            ),
-
-                            // * Shuffle button
-                            GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 25),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.white, width: 0.5),
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(15)),
-                                      color: const Color.fromRGBO(
-                                          255, 255, 255, 0.07)),
-                                  child: const Row(
-                                    children: [
-                                      Icon(
-                                        Icons.shuffle,
-                                        color: Colors.white,
-                                      ),
-                                      Text(
-                                        'Shuffle',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 20),
-                                      ),
-                                    ],
-                                  )),
-                            ),
-                          ],
-                        );
+                        return const AlbumButtons(albumSongs: []);
                       }
                     }),
 
@@ -309,88 +182,17 @@ class _SelectedAlbumScreenState extends State<SelectedAlbumScreen> {
                       builder: (BuildContext context, state) {
                         if (state is GetAlbumSongsStateLoaded) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(
-                              children: [
-                                ...state.songs.map((song) => GestureDetector(
-                                      onTap: () {
-                                        context
-                                            .read<PlayerCubit>()
-                                            .setPlayList(state.songs);
-                                        context
-                                            .read<PlayerCubit>()
-                                            .playSong(song);
-                                      },
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              // * Playing icon
-                                              BlocBuilder<PlayerCubit,
-                                                      PlayerState>(
-                                                  builder:
-                                                      (context, playerState) {
-                                                if (playerState
-                                                        .currentSong?.id ==
-                                                    song.id) {
-                                                  return Icon(
-                                                    Icons.equalizer_rounded,
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                  );
-                                                } else {
-                                                  return const Icon(
-                                                    Icons.equalizer_rounded,
-                                                    color: Color.fromRGBO(
-                                                        255, 255, 255, 0.2),
-                                                  );
-                                                }
-                                              }),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-
-                                              // * Song name
-                                              Expanded(
-                                                child: Text(
-                                                  song.name ?? 'Unknown',
-                                                  style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 17,
-                                                      fontWeight:
-                                                          FontWeight.w200),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-
-                                              // * Song duration
-                                              Text(
-                                                miliSecondsToMinutesFormat(
-                                                    song.duration),
-                                                style: const TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        255, 255, 255, 0.3),
-                                                    fontSize: 12),
-                                              )
-                                            ],
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          const Divider(
-                                            thickness: 0.1,
-                                          )
-                                        ],
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: state.songs.isNotEmpty
+                                  ? FullSizeSongList(songList: state.songs)
+                                  : const Center(
+                                      child: Text(
+                                        'Nothing to show.',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
                                       ),
-                                    ))
-                              ],
-                            ),
-                          );
+                                    ));
                         }
 
                         if (state is GetAlbumSongsStateLoading) {
@@ -410,7 +212,10 @@ class _SelectedAlbumScreenState extends State<SelectedAlbumScreen> {
               );
             } else {
               return const Center(
-                child: Text('Nothing to show'),
+                child: Text(
+                  'Nothing to show',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
               );
             }
           }),
