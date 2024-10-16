@@ -7,7 +7,7 @@ import 'package:palm_player/presentation/cubits/album/get_album_songs/get_album_
 import 'package:palm_player/presentation/cubits/album/get_album_songs/get_album_songs_state.dart';
 import 'package:palm_player/presentation/cubits/album/set_current_album/set_current_album_cubit.dart';
 import 'package:palm_player/presentation/cubits/album/set_current_album/set_current_album_state.dart';
-import 'package:palm_player/presentation/utils/handle_bottom_navigation_index.dart';
+import 'package:palm_player/presentation/cubits/bottom_navigator/bottom_navigator_cubit.dart';
 import 'package:palm_player/presentation/widgets/selected_album_sreen/album_buttons.dart';
 import 'package:palm_player/presentation/widgets/selected_album_sreen/full_size_song_list.dart';
 
@@ -36,9 +36,12 @@ class _SelectedAlbumScreenState extends State<SelectedAlbumScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  context
-                      .read<HandleBottomNavigationIndex>()
-                      .setSelectedScreen(0);
+                  var setScreenIndex =
+                      context.read<BottomNavigatorCubit>().state.setScreenIndex;
+
+                  if (setScreenIndex != null) {
+                    setScreenIndex(0);
+                  }
                 },
                 child: const Icon(
                   Icons.keyboard_arrow_down_outlined,

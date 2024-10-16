@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:palm_player/presentation/cubits/bottom_navigator/bottom_navigator_cubit.dart';
 import 'package:palm_player/presentation/navigators/top_navigator.dart';
 import 'package:palm_player/presentation/screens/search_screen.dart';
 import 'package:palm_player/presentation/screens/selected_album_screen.dart';
 import 'package:palm_player/presentation/screens/settings_screen.dart';
-import 'package:palm_player/presentation/utils/handle_bottom_navigation_index.dart';
 import 'package:palm_player/presentation/widgets/bottom_navigator/custom_bottom_navigation_bar.dart';
 import 'package:palm_player/presentation/widgets/bottom_navigator/custom_bottom_navigation_bar_item.dart';
 import 'package:palm_player/presentation/widgets/bottom_navigator/expandible_player_controller.dart';
@@ -40,6 +40,7 @@ class _BottomNavigator extends State<BottomNavigator> {
       isPopScreen = false;
       _lastSelectedIndex = _selectedIndex;
       _selectedIndex = index;
+      context.read<BottomNavigatorCubit>().loadScreenIndex(index);
     });
   }
 
@@ -64,7 +65,8 @@ class _BottomNavigator extends State<BottomNavigator> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.sizeOf(context).height;
     double bottomNavigationBarHeight = kBottomNavigationBarHeight;
-    // final visibleScreens = showHiddenScreen ? _screens : _screens.sublist(0, 3);
+
+    context.read<BottomNavigatorCubit>().loadSetScreenIndex(setSelectedScreen);
 
     return PopScope(
       canPop: _selectedIndex == 0 ? true : false,
@@ -75,23 +77,19 @@ class _BottomNavigator extends State<BottomNavigator> {
         resizeToAvoidBottomInset: false,
         backgroundColor: const Color.fromRGBO(26, 27, 32, 1),
         body: SafeArea(
-            child: RepositoryProvider<HandleBottomNavigationIndex>(
-          create: (context) =>
-              HandleBottomNavigationIndex(setSelectedScreen: setSelectedScreen),
-          child: Stack(children: [
-            IndexedStack(index: _selectedIndex, children: _screens),
-            Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: SizedBox(
-                    height: screenHeight * 1,
-                    child: ExpandiblePlayerController(
-                      notifyToBottomNavigatorExpandibleIsSmall:
-                          setIsExpandibleSmall,
-                    )))
-          ]),
-        )),
+            child: Stack(children: [
+          IndexedStack(index: _selectedIndex, children: _screens),
+          Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: SizedBox(
+                  height: screenHeight * 1,
+                  child: ExpandiblePlayerController(
+                    notifyToBottomNavigatorExpandibleIsSmall:
+                        setIsExpandibleSmall,
+                  )))
+        ])),
         bottomNavigationBar: AnimatedContainer(
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeInOut,
