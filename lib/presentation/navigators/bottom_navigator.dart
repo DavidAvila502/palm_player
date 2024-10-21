@@ -31,31 +31,31 @@ class _BottomNavigator extends State<BottomNavigator> {
     double screenHeight = MediaQuery.sizeOf(context).height;
     double bottomNavigationBarHeight = kBottomNavigationBarHeight;
 
-    final navigatorCubit = context.watch<NavigatorCubit>();
+    final navigatorCubit = BlocProvider.of<NavigatorCubit>(context);
 
-    return PopScope(
-      canPop: (navigatorCubit.state.bottomNavigatorIndex == 0 &&
-              navigatorCubit.state.topNavigatorIndex == 0 &&
-              navigatorCubit.state.isExpandibleControllerSmall == true)
-          ? true
-          : false,
-      onPopInvoked: (didPop) {
-        handleBackButton(navigatorCubit);
+    return BlocSelector<NavigatorCubit, NavigatorCubitState,
+        Map<String, dynamic>>(
+      selector: (state) {
+        return {
+          "bottomNavigatorIndex": state.bottomNavigatorIndex,
+          "isExpandibleControllerSmall": state.isExpandibleControllerSmall,
+          "canPop": (state.bottomNavigatorIndex == 0 &&
+              state.topNavigatorIndex == 0 &&
+              state.isExpandibleControllerSmall == true)
+        };
       },
-      child: BlocSelector<NavigatorCubit, NavigatorCubitState,
-              Map<String, dynamic>>(
-          selector: (state) => {
-                "bottomNavigatorIndex": state.bottomNavigatorIndex,
-                "isExpandibleControllerSmall": state.isExpandibleControllerSmall
-              },
-          builder: (context, selectedProperties) {
-            final int selectedIndex =
-                selectedProperties["bottomNavigatorIndex"];
+      builder: (context, selectedProperties) {
+        final int selectedIndex = selectedProperties["bottomNavigatorIndex"];
+        final bool isExpandibleSmall =
+            selectedProperties["isExpandibleControllerSmall"];
+        final bool canPop = selectedProperties["canPop"];
 
-            final bool isExpandibleSmall =
-                selectedProperties["isExpandibleControllerSmall"];
-
-            return Scaffold(
+        return PopScope(
+            canPop: canPop,
+            onPopInvoked: (didPop) {
+              handleBackButton(navigatorCubit);
+            },
+            child: Scaffold(
               resizeToAvoidBottomInset: false,
               backgroundColor: const Color.fromRGBO(26, 27, 32, 1),
               body: SafeArea(
@@ -118,8 +118,8 @@ class _BottomNavigator extends State<BottomNavigator> {
                             key: const ValueKey('HideContainer'),
                             height: bottomNavigationBarHeight)),
               ),
-            );
-          }),
+            ));
+      },
     );
   }
 }

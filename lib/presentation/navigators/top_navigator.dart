@@ -16,6 +16,18 @@ class _TopNavigatorState extends State<TopNavigator>
     with SingleTickerProviderStateMixin {
   late TabController? _tabController;
 
+  final List<Widget> _screens = const [
+    KeepAlivePage(child: HomeScreen()),
+    KeepAlivePage(child: AlbumScreen()),
+  ];
+
+  final List<Tab> _tabs = const [
+    Tab(child: Text('All songs')),
+    Tab(
+      child: Text('Albums'),
+    )
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -39,18 +51,6 @@ class _TopNavigatorState extends State<TopNavigator>
     _tabController?.dispose();
     super.dispose();
   }
-
-  final List<Widget> _screens = const [
-    KeepAlivePage(child: HomeScreen()),
-    KeepAlivePage(child: AlbumScreen()),
-  ];
-
-  final List<Tab> _tabs = const [
-    Tab(child: Text('All songs')),
-    Tab(
-      child: Text('Albums'),
-    )
-  ];
 
   void changeTap(int index) {
     _tabController?.animateTo(index);
