@@ -9,7 +9,7 @@ import 'package:palm_player/domain/use_cases/album_use_cases.dart';
 import 'package:palm_player/domain/use_cases/song_use_cases.dart';
 import 'package:palm_player/presentation/cubits/album/get_albums/get_albums_cubit.dart';
 import 'package:palm_player/presentation/cubits/album/set_current_album/set_current_album_cubit.dart';
-import 'package:palm_player/presentation/cubits/bottom_navigator/bottom_navigator_cubit.dart';
+import 'package:palm_player/presentation/cubits/navigator/navigator_cubit.dart';
 import 'package:palm_player/presentation/cubits/player/player_cubit.dart';
 import 'package:palm_player/presentation/cubits/progress/song_progress_cubit.dart';
 import 'package:palm_player/presentation/cubits/song/get_all_songs/get_all_songs_cubit.dart';
@@ -42,31 +42,26 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.greenAccent),
         useMaterial3: true,
       ),
-      home: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-              create: (BuildContext context) =>
-                  PlayerCubit(context.read<AudioPlayer>())),
-          BlocProvider(
-              create: (BuildContext context) =>
-                  GetAllSongsCubit(context.read<SongUseCases>())
-                    ..getAllSongs()),
-          BlocProvider(
-              create: (BuildContext context) =>
-                  GetSongArtcubit(context.read<SongUseCases>())),
-          BlocProvider(
-              create: (BuildContext context) =>
-                  SongProgressCubit(context.read<AudioPlayer>())),
-          BlocProvider(
+      home: MultiBlocProvider(providers: [
+        BlocProvider(
             create: (BuildContext context) =>
-                GetAlbumsCubit(context.read<AlbumUseCases>())..getAlbums(),
-          ),
-          BlocProvider(
-              create: (BuildContext context) => SetCurrentAlbumCubit()),
-          BlocProvider(create: (BuildContext context) => BottomNavigatorCubit())
-        ],
-        child: const BottomNavigator(),
-      ),
+                PlayerCubit(context.read<AudioPlayer>())),
+        BlocProvider(
+            create: (BuildContext context) =>
+                GetAllSongsCubit(context.read<SongUseCases>())..getAllSongs()),
+        BlocProvider(
+            create: (BuildContext context) =>
+                GetSongArtcubit(context.read<SongUseCases>())),
+        BlocProvider(
+            create: (BuildContext context) =>
+                SongProgressCubit(context.read<AudioPlayer>())),
+        BlocProvider(
+          create: (BuildContext context) =>
+              GetAlbumsCubit(context.read<AlbumUseCases>())..getAlbums(),
+        ),
+        BlocProvider(create: (BuildContext context) => SetCurrentAlbumCubit()),
+        BlocProvider(create: (BuildContext context) => NavigatorCubit())
+      ], child: const BottomNavigator()),
     );
   }
 }

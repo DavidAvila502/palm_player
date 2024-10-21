@@ -5,7 +5,7 @@ import 'package:palm_player/domain/use_cases/album_use_cases.dart';
 import 'package:palm_player/presentation/cubits/album/get_album_art/get_album_art_cubit.dart';
 import 'package:palm_player/presentation/cubits/album/get_album_art/get_album_art_state.dart';
 import 'package:palm_player/presentation/cubits/album/set_current_album/set_current_album_cubit.dart';
-import 'package:palm_player/presentation/cubits/bottom_navigator/bottom_navigator_cubit.dart';
+import 'package:palm_player/presentation/cubits/navigator/navigator_cubit.dart';
 
 class AlbumList extends StatelessWidget {
   final List<Album> albums;
@@ -25,12 +25,7 @@ class AlbumList extends StatelessWidget {
                   .read<SetCurrentAlbumCubit>()
                   .setCurrentAlbum(albums[index]);
 
-              var setScreenIndex =
-                  context.read<BottomNavigatorCubit>().state.setScreenIndex;
-
-              if (setScreenIndex != null) {
-                setScreenIndex(3);
-              }
+              context.read<NavigatorCubit>().updateBottomNavigatorIndex(3);
             },
             child: ClipRRect(
               borderRadius: const BorderRadius.all(Radius.circular(15)),
